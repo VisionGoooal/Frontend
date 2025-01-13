@@ -1,0 +1,24 @@
+.form-group {
+    margin-bottom: 3vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.form-group label {
+    width: 100%;
+    text-align: left;
+    font-weight: bold;
+}
+
+.form-group input {
+    margin-bottom: 2vh;
+    width: 100%;
+    padding: 1vh;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 2vh;
+    background-color: white;
+    color: #333;
+}
