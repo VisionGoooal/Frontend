@@ -1,8 +1,4 @@
-.body {
-    background-color: #333;
-}
-
-.login-page-container {
+.register-page-container {
     display: flex;
     justify-content: center;
     align-items: baseline;
@@ -11,44 +7,29 @@
     padding-top: 5vh;
 }
 
-.login-container{
+.signup-container {
     max-width: 500px;
     width: 100%;
     background: #444;
     padding: 6vh 9vh;
-    border-radius: 4vh;
+    border-radius: 3vh;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 3rem;
 }
 
-.login-form {
+.signup-form {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
-    border-color: white;
 }
 
-.login-form h2 {
+.signup-form h2 {
     text-align: center;
     margin-bottom: 3vh;
     font-size: 1.8rem;
     color: #fff;
-    margin-top: 3vh;
-}
-
-
-.login-button {
-    width: 100%;
-    padding: 12px;
-    background: linear-gradient(45deg, #4caf50, #81c784);
-    color: #fff;
-    font-size: 1.2rem;
-    font-weight: bold;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 2vh auto;
-    display: block;
+    margin-top: 2vh;
 }
 
 .form-links {
@@ -68,8 +49,6 @@
 .form-links a:hover {
     color: #388e3c;
 }
-
-
 @media (max-height: 800px) {
     .page-container {
         padding: 80px 0 20px 0; 
