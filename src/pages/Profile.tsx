@@ -1,14 +1,14 @@
 import LoggedInNavBar from "../components/navbars-components/LoggedInNavBar";
 
-const Feed = () => {
+const Profile = () => {
   return (
     <>
       <LoggedInNavBar />
       <div>
-        <h1>Feed</h1>
+        <h1>Profile</h1>
       </div>
     </>
   );
 };
 
-export default Feed;
+export default Profile;

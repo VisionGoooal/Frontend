@@ -4,7 +4,7 @@ import {
   FEED_PAGE_PATH,
   PREDICTIONS_PAGE_PATH,
   PROFILE_PAGE_PATH,
-} from "../constants/routePaths";
+} from "../../constants/routePaths";
 
 const LoggedInNavBar = () => {
   const logoutButton = (
