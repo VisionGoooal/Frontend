@@ -1,4 +1,4 @@
-import LandingPageNavbar from "../ui-components/LandingPageNavbar";
+import LandingPageNavbar from "../navbars-components/LandingPageNavbar";
 import "../css/LandingPage.css";
 import "../css/LandingPageNavbar.css";
 
