@@ -5,7 +5,7 @@ import {
   LANDING_PAGE_PATH,
   ABOUT_US_PAGE_PATH,
   FEED_PAGE_PATH,
-} from "../constants/routePaths";
+} from "../../constants/routePaths";
 
 const LandingPageNavbar = () => {
   const loginModal = (
