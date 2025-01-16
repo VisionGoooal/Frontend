@@ -9,6 +9,7 @@
     border-radius: 8px;  /* פינות מעוגלות יותר */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);  /* הוספת צללים לכפתור */
     transition: all 0.3s ease;  /* שינוי חלק של כל המאפיינים */
+    cursor: pointer;
 }
 
 .button:hover {
