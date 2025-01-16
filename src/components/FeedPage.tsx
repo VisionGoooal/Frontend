@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axiosInstance from "../Services/axiosConfig"; 
+import axiosInstance from "../Services/axiosConfig";
 import PostWithComments from "./PostWithComments";
 import { Post } from "../types/Post";
-
 
 const FeedPage: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -13,7 +12,7 @@ const FeedPage: React.FC = () => {
       try {
         setIsLoading(true);
         const response = await axiosInstance.get("/post");
-        console.log("Response data:", response.data); 
+        console.log("Response data:", response.data);
         setPosts(response.data);
       } catch (error) {
         console.error("Error fetching posts:", error);
@@ -29,7 +28,9 @@ const FeedPage: React.FC = () => {
 
   return (
     <div>
-      <h1>Feed</h1>
+      <center>
+        <h1>Feed</h1>
+      </center>
       {posts.length > 0 ? (
         posts.map((post) => (
           <div key={post._id}>
