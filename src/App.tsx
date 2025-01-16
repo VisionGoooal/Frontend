@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 
 import { LANDING_PAGE_PATH, REGISTER_PAGE_PATH, LOGIN_PAGE_PATH } from './constants/routePaths';
+import FeedPage from './components/FeedPage';
 
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
     <>
     <Router>
       <Routes>
-        <Route path={LANDING_PAGE_PATH} element={<LandingPage />} />
+        <Route path={LANDING_PAGE_PATH} element={<FeedPage />} />
         <Route path={LOGIN_PAGE_PATH} element={<Login />} />
         <Route path={REGISTER_PAGE_PATH} element={<Register />} />
       </Routes>
