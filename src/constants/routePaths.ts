@@ -1,3 +1,5 @@
 export const LANDING_PAGE_PATH = '/'
-export const LOGIN_PAGE_PATH = '/login'
-export const REGISTER_PAGE_PATH = '/register'
+export const ABOUT_US_PAGE_PATH = '/aboutus'
+export const FEED_PAGE_PATH = '/feed'
+export const PREDICTIONS_PAGE_PATH = '/predictions'
+export const PROFILE_PAGE_PATH = '/profile'

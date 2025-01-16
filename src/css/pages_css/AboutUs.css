@@ -1,0 +1,46 @@
+.about-us .container {
+  font-family: "Arial", sans-serif;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.about-us h1 {
+  color: #007bff;
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.about-us h2 {
+  color: #28a745;
+  font-size: 2rem;
+  margin-top: 20px;
+}
+
+.about-us p {
+  color: #333;
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+.about-us ul {
+  list-style-type: disc;
+  margin-left: 20px;
+  color: #555;
+}
+
+.about-us ul li {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+.about-us h3 {
+  color: #ff5722;
+  font-size: 1.5rem;
+  margin-top: 30px;
+}
+
+.about-us .text-center {
+  text-align: center;
+}
