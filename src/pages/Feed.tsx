@@ -1,3 +1,4 @@
+import FeedPage from "../components/FeedPage";
 import LoggedInNavBar from "../components/navbars-components/LoggedInNavBar";
 
 const Feed = () => {
@@ -5,7 +6,7 @@ const Feed = () => {
     <>
       <LoggedInNavBar />
       <div>
-        <h1>Feed</h1>
+        <FeedPage />
       </div>
     </>
   );
