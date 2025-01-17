@@ -33,7 +33,7 @@ const FeedPage: React.FC = () => {
       </center>
       {posts.length > 0 ? (
         posts.map((post) => (
-          <div key={post._id}>
+          <div key={post._id} className="divFather">
             <PostWithComments postId={post._id} />
             <hr />
           </div>
