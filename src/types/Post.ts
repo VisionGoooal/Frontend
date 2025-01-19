@@ -3,4 +3,5 @@ export interface Post {
     content: string;
     owner: string;
     likes: number;
+    image?: string;
   }
