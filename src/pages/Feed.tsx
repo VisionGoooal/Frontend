@@ -7,6 +7,10 @@ const Feed = () => {
     <>
       <LoggedInNavBar />
       <div>
+      <center>
+        <h1>Feed</h1>
+      </center>
+        
         <FeedPage />
       </div>
     </>
