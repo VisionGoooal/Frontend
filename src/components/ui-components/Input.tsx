@@ -4,9 +4,14 @@ interface InputProps {
   id: string;
   placeholder?: string;
   required?: boolean;
+
+  
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+
   options?: { value: string; label: string }[];
   className?: string;
   role?: string;
+
 }
 
 const Input: React.FC<InputProps> = ({
@@ -16,8 +21,12 @@ const Input: React.FC<InputProps> = ({
   placeholder,
   required,
   options,
+
+  onChange,
+
   className, // Include className in the destructure
   role, // Include role if needed
+
 }) => {
   return (
     <div className="form-group">
@@ -42,8 +51,12 @@ const Input: React.FC<InputProps> = ({
           id={id}
           placeholder={placeholder}
           required={required}
+
+          onChange={onChange}
+
           className={`form-control ${className || ""}`} // Apply the custom class if provided
           role={role} // Include role for accessibility
+
         />
       )}
     </div>
