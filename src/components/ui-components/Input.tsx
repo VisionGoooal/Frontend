@@ -1,3 +1,14 @@
+interface InputProps {
+  label: string;
+  type: string;
+  id: string;
+  placeholder?: string;
+  required?: boolean;
+  options?: { value: string; label: string }[];
+  className?: string;
+  role?: string;
+}
+
 const Input: React.FC<InputProps> = ({
   label,
   type,
@@ -19,7 +30,7 @@ const Input: React.FC<InputProps> = ({
           role={role} // Include role for accessibility
         >
           <option value="">Select your {label.toLowerCase()}</option>
-          {options?.map((option) => (
+          {options?.map((option: { value: string; label: string }) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
