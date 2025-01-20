@@ -3,6 +3,7 @@ import axiosInstance from "../Services/axiosConfig";
 import PostWithComments from "./PostWithComments";
 import { Post } from "../types/Post";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
+import { Prediction } from "../types/Prediction"; // Adjust the import path as necessary
 
 const FeedPage: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -32,6 +33,43 @@ const FeedPage: React.FC = () => {
   useEffect(() => {
     fetchPosts();
   }, []);
+
+  useEffect(() => {
+    const storedPrediction = window.localStorage.getItem("prediction");
+    if (storedPrediction) {
+      const prediction: Prediction = JSON.parse(storedPrediction);
+      addPostByPrediction(prediction);
+    }
+    window.localStorage.removeItem("prediction");
+    fetchPosts();
+  }, []);
+
+  const addPostByPrediction = async (prediction:Prediction) => {
+    let team1Logo = "";
+    let team2Logo = "";
+try {
+    const logosResponse = await fetch("/src/constants/teamsLogos.json");
+    const data = await logosResponse.json();
+    team1Logo = data[prediction.Team1];
+    team2Logo = data[prediction.Team2];
+    const drawLogo = data["Draw"];
+    console.log(prediction.Team1, prediction.Team2);
+    console.log("Team 1 logo:", team1Logo);
+    console.log("Team 2 logo:", team2Logo);
+    const post = {
+        title: prediction.Team1 + " VS " + prediction.Team2 + " VisonGoal AI Prediction",
+        content: prediction.Winner != "Draw" ? "VisionGoal AI predict that " + prediction.Winner + " will win " + prediction.Team1Score+"-"
+        + prediction.Team2Score + "the match and I am with them!" : "VisionGoal AI predict that the match will end in a draw " + prediction.Team1Score+"-" + prediction.Team2Score,
+        owner: "some-user-id",
+        likes: 0,
+        image: prediction.Winner == prediction.Team1 ? team1Logo : prediction.Winner == prediction.Team2 ? team2Logo : drawLogo, 
+    };
+    const response = await axiosInstance.post("/prediction/post", post);
+    console.log("Prediction reposted successfully:", response.data);
+  } catch (error) {
+    console.error("Error reposting prediction:", error);
+  }
+};
 
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setPostContent(e.target.value);
@@ -158,15 +196,14 @@ const FeedPage: React.FC = () => {
 
       {/* Posts rendering */}
       {posts.length > 0 ? (
-        posts
-          .slice()
-          .reverse()
-          .map((post) => (
-            <div key={post._id} className="divFather">
-              <PostWithComments postId={post._id} />
-              <hr />
-            </div>
-          ))
+
+        posts.slice().reverse().map((post) => (
+          <div key={post._id} className="divFather">
+            <PostWithComments postId={post._id} />
+            <hr />
+          </div>
+        ))
+
       ) : (
         <p>No posts available.</p>
       )}

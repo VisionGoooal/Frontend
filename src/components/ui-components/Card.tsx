@@ -1,34 +1,23 @@
-
-import Avatar from "../ui-components/Avatar";
+import React from "react";
+import "../../css/Card.css";
 
 interface CardProps {
-    userName: string;
-    email: string;
-    image: string;
-    }
+  title?: string;
+  children: React.ReactNode;
+  className?: string;
+}
 
-const Card = ({ userName, email, image }: CardProps) => {
+const Card = ({ title, children, className }: CardProps) => {
   return (
-    <div
-      className="card"
-      style={{ width: "28rem", margin: "1rem", height: "100%" }}
-    >
-      <Avatar
-        src={image}
-        alt="Card image"
-        size="sm"
-      />
-      <div className="card-body">
-        <h5 className="card-title">{userName}</h5>
-        <h6 className="card-subtitle mb-2 text-body-secondary">
-        {email}
-        </h6>
-        <p className="card-text">
-          
-        </p>
-      </div>
+    <div className={`card ${className || ""}`}>
+      {title && <h3 className="card-title">{title}</h3>}
+      <div className="card-content">{children}</div>
     </div>
   );
+};
+
+Card.defaultProps = {
+  title: null, // Default to null if no title is provided
 };
 
 export default Card;
