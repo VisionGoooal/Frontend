@@ -147,7 +147,7 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId }) => {
         <h3>Comments</h3>
         {commentsToDisplay.length > 0 ? (
           <ul className="comments-list">
-            {commentsToDisplay.map((comment) => (
+            {commentsToDisplay.slice().reverse().map((comment) => (
               <li key={comment._id} className="comment">
                 <p className="comment-author">By: {comment.owner}</p>
                 <p className="comment-content">{comment.content}</p>

@@ -12,12 +12,10 @@ const FeedPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
-  
   const onEmojiClick = (emojiData: EmojiClickData) => {
-    setPostContent((prevContent) => prevContent + emojiData.emoji); 
+    setPostContent((prevContent) => prevContent + emojiData.emoji);
   };
 
-  
   const fetchPosts = async () => {
     try {
       setIsLoading(true);
@@ -117,7 +115,6 @@ const FeedPage: React.FC = () => {
                 onChange={handleImageSelect}
               />
 
-              
               <button
                 type="button"
                 className="add-emoji-button"
@@ -161,12 +158,15 @@ const FeedPage: React.FC = () => {
 
       {/* Posts rendering */}
       {posts.length > 0 ? (
-        posts.map((post) => (
-          <div key={post._id} className="divFather">
-            <PostWithComments postId={post._id} />
-            <hr />
-          </div>
-        ))
+        posts
+          .slice()
+          .reverse()
+          .map((post) => (
+            <div key={post._id} className="divFather">
+              <PostWithComments postId={post._id} />
+              <hr />
+            </div>
+          ))
       ) : (
         <p>No posts available.</p>
       )}
