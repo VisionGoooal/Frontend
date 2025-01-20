@@ -110,11 +110,14 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId }) => {
         <p>{post.content}</p>
       </div>
 
-      {post.image!=null && <div className="post-image">
-        <img src={`http://localhost:3000${post.image}`} alt="post" />
+      {post.image != null&& (
+        <div className="post-image">
+          <img src={post.image.startsWith("http") ? post.image : `http://localhost:3000${post.image}`} 
+          alt="post" 
+        />
+  </div>
+)}
 
-
-      </div>}
 
       <div className="likes-and-comments">
         <div className="likes" onClick={handleLike}>
