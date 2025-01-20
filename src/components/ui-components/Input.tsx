@@ -1,15 +1,3 @@
-import React from "react";
-import "../../css/Input.css";
-
-interface InputProps {
-  label: string;
-  type: string;
-  id: string;
-  placeholder?: string;
-  required?: boolean;
-  options?: { value: string; label: string }[]; // For dropdown options
-}
-
 const Input: React.FC<InputProps> = ({
   label,
   type,
@@ -17,12 +5,19 @@ const Input: React.FC<InputProps> = ({
   placeholder,
   required,
   options,
+  className, // Include className in the destructure
+  role, // Include role if needed
 }) => {
   return (
     <div className="form-group">
       <label htmlFor={id}>{label}</label>
       {type === "select" ? (
-        <select className="form-control" id={id} required={required}>
+        <select
+          className={`form-control ${className || ""}`} // Apply the custom class if provided
+          id={id}
+          required={required}
+          role={role} // Include role for accessibility
+        >
           <option value="">Select your {label.toLowerCase()}</option>
           {options?.map((option) => (
             <option key={option.value} value={option.value}>
@@ -36,7 +31,8 @@ const Input: React.FC<InputProps> = ({
           id={id}
           placeholder={placeholder}
           required={required}
-          className="form-control"
+          className={`form-control ${className || ""}`} // Apply the custom class if provided
+          role={role} // Include role for accessibility
         />
       )}
     </div>

@@ -1,0 +1,133 @@
+.card {
+    padding: 20px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .card-title {
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 2px solid #444;
+    padding-bottom: 5px;
+  }
+  
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  /* Profile Card Content */
+  .profile-card .profile-card-content {
+    display: flex;
+    align-items: center;
+  }
+  
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-right: 20px;
+  }
+  
+  /* Prediction List Styling */
+  .prediction-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .prediction-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+  }
+  
+  /* Input Styling for Edit Info and Preferences */
+  .edit-info label,
+  .preferences label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    display: block;
+    color: #fff;
+  }
+  
+  .edit-info input,
+  .edit-info select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff; /* Ensure white background */
+    color: #000; /* Black text for better readability */
+    font-size: 16px;
+  }
+  
+  .edit-info input:focus,
+  .edit-info select:focus {
+    outline: none;
+    border-color: #007bff; /* Blue highlight on focus */
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.5); /* Optional focus shadow */
+  }
+  
+  input[type="checkbox"] {
+    margin-right: 10px;
+  }
+  
+  /* Preferences Section Switch Styling */
+  .form-check.form-switch {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .form-check-input {
+    width: 40px;
+    height: 20px;
+    background-color: #444;
+    border: 1px solid #555;
+    border-radius: 20px;
+    appearance: none;
+    cursor: pointer;
+    position: relative;
+    outline: none;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .form-check-input:checked {
+    background-color: #007bff;
+  }
+  
+  .form-check-input::before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background-color: #fff;
+    border-radius: 50%;
+    top: 1px;
+    left: 1px;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .form-check-input:checked::before {
+    transform: translateX(20px);
+  }
+  
+  .form-check-label {
+    color: #fff;
+    font-weight: bold;
+  }
+  
+  /* Space between fields in Edit Info */
+  .edit-info,
+  .preferences {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
