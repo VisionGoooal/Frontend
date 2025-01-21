@@ -59,7 +59,7 @@ try {
     const post = {
         title: prediction.Team1 + " VS " + prediction.Team2 + " VisonGoal AI Prediction",
         content: prediction.Winner != "Draw" ? "VisionGoal AI predict that " + prediction.Winner + " will win " + prediction.Team1Score+"-"
-        + prediction.Team2Score + "the match and I am with them!" : "VisionGoal AI predict that the match will end in a draw " + prediction.Team1Score+"-" + prediction.Team2Score,
+        + prediction.Team2Score + " the match and I am with them!" : "VisionGoal AI predict that the match will end in a draw " + prediction.Team1Score+"-" + prediction.Team2Score,
         owner: "some-user-id",
         likes: 0,
         image: prediction.Winner == prediction.Team1 ? team1Logo : prediction.Winner == prediction.Team2 ? team2Logo : drawLogo, 
