@@ -3,6 +3,7 @@ import LoggedInNavBar from "../components/navbars-components/LoggedInNavBar";
 import CardPrediction from "../components/ui-components/CardPrediction";
 import "../css/pages_css/Predictions.css"
 import { Prediction } from "../types/Prediction";
+import axiosInstance from "../Services/axiosConfig";
 
 const Predictions = () => {
 
@@ -10,10 +11,11 @@ const Predictions = () => {
   const [predictions, setPredictions] = useState<Prediction[]>([]);
 
   useEffect(() => {
-    fetch("/src/constants/predictions.json")
-    .then((response) => response.json())
-      .then((data) => setPredictions(data.predictions))
-      .catch((error) => console.error("Error loading predictions:", error));
+    const fetchPredictions = async () => {
+      const predictionsData = await axiosInstance.get("/prediction");
+      setPredictions(predictionsData.data);
+    };
+    fetchPredictions();
   }, []);
 
   return (
