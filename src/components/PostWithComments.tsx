@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../Services/axiosConfig";
 import { Comment } from "../types/Comment";
 import { Post } from "../types/Post";
-import "../css/components_css/postCss.css"
+import "../css/components_css/postCss.css";
 
 interface PostWithCommentsProps {
   postId: string;
@@ -110,14 +110,18 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId }) => {
         <p>{post.content}</p>
       </div>
 
-      {post.image != null&& (
+      {post.image != null && (
         <div className="post-image">
-          <img src={post.image.startsWith("http") ? post.image : `http://localhost:3000${post.image}`} 
-          alt="post" 
-        />
-  </div>
-)}
-
+          <img
+            src={
+              post.image.startsWith("http")
+                ? post.image
+                : `http://localhost:3000${post.image}`
+            }
+            alt="post"
+          />
+        </div>
+      )}
 
       <div className="likes-and-comments">
         <div className="likes" onClick={handleLike}>
@@ -132,7 +136,6 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId }) => {
           </span>
           <p>{comments.length} Comments</p>
         </div>
-        
       </div>
 
       {showCommentInput && (
@@ -150,12 +153,15 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId }) => {
         <h3>Comments</h3>
         {commentsToDisplay.length > 0 ? (
           <ul className="comments-list">
-            {commentsToDisplay.slice().reverse().map((comment) => (
-              <li key={comment._id} className="comment">
-                <p className="comment-author">By: {comment.owner}</p>
-                <p className="comment-content">{comment.content}</p>
-              </li>
-            ))}
+            {commentsToDisplay
+              .slice()
+              .reverse()
+              .map((comment) => (
+                <li key={comment._id} className="comment">
+                  <p className="comment-author">By: {comment.owner}</p>
+                  <p className="comment-content">{comment.content}</p>
+                </li>
+              ))}
           </ul>
         ) : (
           <p>No comments yet.</p>
