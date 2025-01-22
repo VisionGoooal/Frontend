@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../Services/axiosConfig";
 import { Comment } from "../types/Comment";
 import { Post } from "../types/Post";
-import "../css/postCss.css";
+import "../css/components_css/postCss.css"
 
 interface PostWithCommentsProps {
   postId: string;

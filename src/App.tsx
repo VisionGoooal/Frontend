@@ -6,7 +6,6 @@ import Feed from "./pages/Feed";
 import Predictions from "./pages/Predictions";
 import Profile from "./pages/Profile";
 
-
 import {
   LANDING_PAGE_PATH,
   ABOUT_US_PAGE_PATH,
@@ -27,7 +26,6 @@ function App() {
           <Route path={PROFILE_PAGE_PATH} element={<Profile />} />
         </Routes>
       </Router>
-
     </>
   );
 }
