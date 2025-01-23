@@ -16,34 +16,21 @@ type SocialLink = {
   svg: React.ReactNode;
 };
 
-type Logo = {
-  src: string;
-  href: string;
-  alt: string;
-  text: string;
-};
+
 
 type FooterProps = {
   sections: Section[];
   socialLinks: SocialLink[];
-  logo: Logo;
+  
 };
 
-const Footer: React.FC<FooterProps> = ({ sections, socialLinks, logo }) => {
+const Footer: React.FC<FooterProps> = ({ sections, socialLinks }) => {
   return (
     <footer className="bg-white dark:bg-gray-900">
-      <hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+      <hr className=" border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
       <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
         <div className="md:flex md:justify-between">
-          <div className="mb-6 md:mb-0">
-            <a href={logo.href} className="flex items-center">
-              <img src={logo.src} className="h-8 me-3" alt={logo.alt} />
-              <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                {logo.text}
-              </span>
-            </a>
-          </div>
-
+          <div className="mb-6 md:mb-0"></div>
           <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
             {sections.map((section, index) => (
               <FooterSection
@@ -55,7 +42,7 @@ const Footer: React.FC<FooterProps> = ({ sections, socialLinks, logo }) => {
           </div>
         </div>
 
-        <div className="sm:flex sm:items-center sm:justify-between">
+        <div className=" sm:items-center sm:justify-between">
           <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
             © 2025{" "}
             <a href="https://flowbite.com/" className="hover:underline">
