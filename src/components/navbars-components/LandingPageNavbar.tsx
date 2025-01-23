@@ -8,7 +8,6 @@ import { User } from "../../types/user";
 import {
   LANDING_PAGE_PATH,
   ABOUT_US_PAGE_PATH,
-  FEED_PAGE_PATH,
 } from "../../constants/routePaths";
 import { useNavigate } from "react-router-dom";
 const LandingPageNavbar = () => {
@@ -201,10 +200,7 @@ const LandingPageNavbar = () => {
     <NavBar
       brandPath={LANDING_PAGE_PATH}
       brandName="VisionGoal"
-      links={[
-        { path: ABOUT_US_PAGE_PATH, name: "About Us" },
-        // { path: FEED_PAGE_PATH, name: "Feed" },
-      ]}
+      links={[{ path: ABOUT_US_PAGE_PATH, name: "About Us" }]}
       actions={
         <>
           {loginModal}

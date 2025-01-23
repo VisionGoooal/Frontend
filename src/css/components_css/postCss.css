@@ -12,11 +12,9 @@
     border: 0.1em solid #e0e0e0;
     aspect-ratio: 16 / 2;
     transition: all 0.3s;
-
-    /* New */
     max-height: 100%;
     overflow:visible ;
-    
+    color: black;
     
 }
 
