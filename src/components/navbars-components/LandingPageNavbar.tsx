@@ -12,11 +12,11 @@ import {
 import { useNavigate } from "react-router-dom";
 const LandingPageNavbar = () => {
   const navigate = useNavigate();
-  const [fullName, setFullName] = useState("");
+  // const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [country, setCountry] = useState("");
+  // const [dateOfBirth, setDateOfBirth] = useState("");
+  // const [country, setCountry] = useState("");
   const [isRegistered, setIsRegistered] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
 

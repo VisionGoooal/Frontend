@@ -1,16 +1,27 @@
 import React from "react";
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  type?: "button" | "submit" | "reset";
-  className?: string;
-  id?: string;
-  ariaLabel?: string;
-  children?: React.ReactNode;
+interface ButtonProps {
+  children: React.ReactNode;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  variant?: "primary" | "secondary" | "brand-secondary";
 }
 
-const Button: React.FC<ButtonProps> = ({ children, ariaLabel, ...rest }) => {
+const buttonStyles = {
+  primary: "bg-indigo-600 text-white hover:bg-indigo-500",
+  secondary: "bg-gray-200 text-gray-900 hover:bg-gray-300",
+  "brand-secondary": "bg-blue-500 text-white hover:bg-blue-600",
+};
+
+const Button: React.FC<ButtonProps> = ({
+  children,
+  onClick,
+  variant = "primary",
+}) => {
   return (
-    <button aria-label={ariaLabel} {...rest}>
+    <button
+      onClick={onClick}
+      className={`px-4 py-2 rounded-md font-semibold shadow-sm transition ${buttonStyles[variant]}`}
+    >
       {children}
     </button>
   );

@@ -2,6 +2,7 @@ import linkedinIcon from "../assets/icons/linkedinIcon.svg";
 import coFounders from "../assets/fourCoFounders.webp";
 import LandingPageNavbar from "../components/navbars-components/LandingPageNavbar";
 import "../css/pages_css/AboutUs.css";
+import Footer from "../components/ui-components/Footer";
 
 const people = [
   {
@@ -114,6 +115,7 @@ const AboutUs = () => {
           </ul>
         </div>
       </div>
+      <Footer />
     </>
   );
 };
