@@ -1,33 +1,35 @@
 import "./App.css";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import LandingPage from "./pages/LandingPage";
-import AboutUs from "./pages/AboutUs";
-import Feed from "./pages/Feed";
-import Predictions from "./pages/Predictions";
-import Profile from "./pages/Profile";
+import { Routes, Route } from "react-router-dom";
+import Login from "./pages/LoginPage";
+import Register from "./pages/RegisterPage";
+import FeedPage from "./pages/FeedPage";
+import Predictions from "./pages/PredictionsPage";
+import Profile from "./pages/ProfilePage";
+import About from "./pages/AboutPage";
+import Chat from "./pages/ChatPage";
+import Footer from "./components/layout/Footer";
+import ContactPage from "./pages/ContactPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 
-import {
-  LANDING_PAGE_PATH,
-  ABOUT_US_PAGE_PATH,
-  FEED_PAGE_PATH,
-  PREDICTIONS_PAGE_PATH,
-  PROFILE_PAGE_PATH,
-} from "./constants/routePaths";
 
-function App() {
+
+const App = () => {
   return (
     <>
-      <Router>
-        <Routes>
-          <Route path={LANDING_PAGE_PATH} element={<LandingPage />} />
-          <Route path={ABOUT_US_PAGE_PATH} element={<AboutUs />} />
-          <Route path={FEED_PAGE_PATH} element={<Feed />} />
-          <Route path={PREDICTIONS_PAGE_PATH} element={<Predictions />} />
-          <Route path={PROFILE_PAGE_PATH} element={<Profile />} />
-        </Routes>
-      </Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/feed" element={<FeedPage />} />
+        <Route path="/predict" element={<Predictions />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/chat" element={<Chat />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/policy" element={<PrivacyPolicyPage />} />
+      </Routes>
+      <Footer />
     </>
   );
-}
+};
 
 export default App;

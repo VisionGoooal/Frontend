@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { FEED_PAGE_PATH } from "../../constants/routePaths";
 
 
 interface Prediction {
@@ -28,7 +27,7 @@ const CardPrediction = ({ prediction }: { prediction: Prediction }) => {
         <Link to={`/predictions/${prediction.Team1}-${prediction.Team2}`}>
           View Details
         </Link>
-        <Link to={FEED_PAGE_PATH} onClick={() => saveOnLocalStorage(prediction)}>Repost this prediction</Link>
+        <Link to='/feed' onClick={() => saveOnLocalStorage(prediction)}>Repost this prediction</Link>
       </div>
     );
   };
