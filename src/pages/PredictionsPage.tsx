@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import LoggedInNavBar from "../components/navbars-components/LoggedInNavBar";
-import CardPrediction from "../components/ui-components/CardPrediction";
+import Navbar from "../components/layout/Navbar";
+import CardPrediction from "../components/ui/CardPrediction";
 import "../css/pages_css/Predictions.css"
 import { Prediction } from "../types/Prediction";
 import axiosInstance from "../Services/axiosConfig";
@@ -20,7 +20,7 @@ const Predictions = () => {
 
   return (
     <>
-      <LoggedInNavBar />
+      <Navbar />
       <div className="predictions-container">
         <h1>Football Predictions</h1>
         <div className="predictions-grid">
