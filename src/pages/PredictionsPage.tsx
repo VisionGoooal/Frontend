@@ -12,7 +12,7 @@ const Predictions = () => {
 
   useEffect(() => {
     const fetchPredictions = async () => {
-      const predictionsData = await axiosInstance.get("/prediction");
+      const predictionsData = await axiosInstance.get("api/prediction");
       setPredictions(predictionsData.data);
     };
     fetchPredictions();

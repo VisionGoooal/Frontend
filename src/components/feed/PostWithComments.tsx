@@ -23,8 +23,8 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId }) => {
         setIsLoading(true);
 
         const [postResponse, commentsResponse] = await Promise.all([
-          axiosInstance.get(`/post/${postId}`),
-          axiosInstance.get(`/comment/${postId}`),
+          axiosInstance.get(`/api/posts/${postId}`),
+          axiosInstance.get(`/api/comments/${postId}`),
         ]);
 
         const postData = postResponse.data;
@@ -49,7 +49,8 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId }) => {
 
   const handleLike = async () => {
     try {
-      const response = await axiosInstance.patch(`/post/${postId}/like`, {
+      console.log("Like button clicked!"); 
+      const response = await axiosInstance.put(`/api/posts/${postId}/like`, {
         action: "like",
       });
       setLikes(response.data.likes);
@@ -66,7 +67,7 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId }) => {
     if (!newComment.trim()) return;
 
     try {
-      const response = await axiosInstance.post(`/comment`, {
+      const response = await axiosInstance.post(`/api/comments/${postId}`, {
         title: "title",
         content: newComment,
         postId: postId,
@@ -116,7 +117,7 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId }) => {
             src={
               post.image.startsWith("http")
                 ? post.image
-                : `http://localhost:3000${post.image}`
+                : `http://localhost:5000${post.image}`
             }
             alt="post"
           />
@@ -124,16 +125,16 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId }) => {
       )}
 
       <div className="likes-and-comments">
-        <div className="likes" onClick={handleLike}>
-          <span role="img" aria-label="like">
+        <div className="likes">
+          <button role="img" aria-label="like" onClick={handleLike}>
             👍
-          </span>
+          </button>
           <p>{likes} Likes</p>
         </div>
-        <div className="comments" onClick={handleCommentClick}>
-          <span role="img" aria-label="comment">
+        <div className="comments">
+          <button role="img" aria-label="comment" onClick={handleCommentClick}>
             💬
-          </span>
+          </button>
           <p>{comments.length} Comments</p>
         </div>
       </div>
@@ -150,7 +151,6 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId }) => {
       )}
 
       <div className="comments-section">
-        <h3>Comments</h3>
         {commentsToDisplay.length > 0 ? (
           <ul className="comments-list">
             {commentsToDisplay
