@@ -19,7 +19,9 @@ const RegisterPage = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [country, setCountry] = useState("");
   const [dob, setDob] = useState("");
-  const [countries, setCountries] = useState<{ name: string; code: string }[]>([]);
+  const [countries, setCountries] = useState<{ name: string; code: string }[]>(
+    []
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -40,7 +42,11 @@ const RegisterPage = () => {
           })
         );
 
-        setCountries(countryList.sort((a, b) => a.name.localeCompare(b.name)));
+        setCountries(
+          countryList.sort((a: { name: string }, b: { name: string }) =>
+            a.name.localeCompare(b.name)
+          )
+        );
       } catch (error) {
         console.error("Error fetching countries:", error);
       }
@@ -52,8 +58,19 @@ const RegisterPage = () => {
     setError("");
 
     // 🔹 Validate inputs
-    if (!userFullName || !email || !password || !confirmPassword || !country || !dob) {
+    if (
+      !userFullName ||
+      !email ||
+      !password ||
+      !confirmPassword ||
+      !country ||
+      !dob
+    ) {
       setError("All fields are required.");
+      return;
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setError("Invalid email address.");
       return;
     }
     if (password !== confirmPassword) {
@@ -63,6 +80,9 @@ const RegisterPage = () => {
     if (password.length < 6) {
       setError("Password must be at least 6 characters.");
       return;
+    }
+    if (!userFullName.trim() || userFullName.length < 2) {
+      setError("Full name is required (min 2 characters)");
     }
 
     setLoading(true);
@@ -75,8 +95,9 @@ const RegisterPage = () => {
           userFullName,
           email,
           password,
+          confirmPassword, // <== ADD THIS
           country,
-          dateOfBirth: new Date(dob).toISOString().split("T")[0], // Converts to YYYY-MM-DD
+          dateOfBirth: new Date(dob).toISOString().split("T")[0],
         }),
       });
 
@@ -84,9 +105,12 @@ const RegisterPage = () => {
       if (!response.ok) throw new Error(data.message || "Registration failed");
 
       localStorage.setItem("token", data.token);
+      localStorage.setItem("userId", data.user.id);
       navigate("/");
     } catch (error) {
-      setError(error instanceof Error ? error.message : "An unknown error occurred");
+      setError(
+        error instanceof Error ? error.message : "An unknown error occurred"
+      );
     } finally {
       setLoading(false);
     }
@@ -95,7 +119,6 @@ const RegisterPage = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 relative">
       <div className="flex w-full max-w-6xl items-center justify-between relative">
-
         {/* 🔥 AI-Inspired Left Side - Brighter */}
         <div className="hidden md:flex flex-col w-1/2 items-center justify-center relative text-black">
           <div className="absolute inset-0">
@@ -105,11 +128,11 @@ const RegisterPage = () => {
           </div>
 
           <h1 className="text-5xl font-extrabold text-indigo-500 drop-shadow-lg z-10">
-             VisionGoal
+            VisionGoal
           </h1>
           <p className="mt-4 text-lg text-gray-700 text-center max-w-md z-10">
-            AI-powered football match predictions. Get real-time insights and analytics
-            to stay ahead of the game!
+            AI-powered football match predictions. Get real-time insights and
+            analytics to stay ahead of the game!
           </p>
 
           {/* Floating AI Effects */}
@@ -158,7 +181,8 @@ const RegisterPage = () => {
               placeholder="Choose a country"
               className="w-full bg-white border border-gray-300 rounded-lg shadow-md"
               popoverProps={{
-                className: "bg-white shadow-md border border-gray-300 rounded-lg",
+                className:
+                  "bg-white shadow-md border border-gray-300 rounded-lg",
               }}
               onChange={(e) => setCountry(e.target.value)}
             >
@@ -188,7 +212,10 @@ const RegisterPage = () => {
 
             <div className="text-center">
               <span className="text-gray-500">Already have an account?</span>{" "}
-              <Link href="/" className="text-indigo-600 hover:underline font-semibold">
+              <Link
+                href="/"
+                className="text-indigo-600 hover:underline font-semibold"
+              >
                 Login
               </Link>
             </div>

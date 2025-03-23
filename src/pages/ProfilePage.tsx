@@ -1,212 +1,296 @@
+// ✅ Updated ProfilePage: email/password are now read-only fields
 import { useEffect, useState } from "react";
 import Navbar from "../components/layout/Navbar";
-import {
-  Input,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Avatar,
-  Select,
-  SelectItem,
-} from "@nextui-org/react";
-
-interface Post {
-  date: string;
-  content: string;
-}
+import { Select, SelectItem } from "@nextui-org/react";
 
 const ProfilePage = () => {
-  const [userFullName, setUserFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [country, setCountry] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [profilePic, setProfilePic] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [profilePic, setProfilePic] = useState("../assets/man.png");
+  const [userFullName, setUserFullName] = useState("John Doe");
+  const [email, setEmail] = useState("john.doe@example.com");
+  const [password] = useState("********"); // Read-only dummy placeholder
+  const [confirmPassword] = useState("********"); // Read-only dummy placeholder
+  const [country, setCountry] = useState("Israel");
   const [countries, setCountries] = useState<{ name: string; code: string }[]>(
     []
   );
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("2000-01-01");
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     const fetchProfile = async () => {
       const token = localStorage.getItem("accessToken");
-
-      if (!token) {
-        alert("Unauthorized! Please log in.");
-        return;
-      }
+      const userId = localStorage.getItem("userId");
 
       try {
-        const response = await fetch("http://localhost:5000/api/auth/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
+        const response = await fetch(
+          `http://localhost:5000/api/auth/profile/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         const data = await response.json();
         if (!response.ok) throw new Error(data.message);
 
         setUserFullName(data.userFullName);
         setEmail(data.email);
         setCountry(data.country);
-        setDateOfBirth(data.dateOfBirth ? data.dateOfBirth.split("T")[0] : ""); // Format date
-        setProfilePic(data.profileImage || "https://www.svgrepo.com/show/51675/man.svg");
-        setPosts(
-          (data.postsHistory || []).map((post: { date: string; content: string }) => ({
-            date: post.date || "Unknown Date",
-            content: post.content || "No Content Available",
-          }))
+        setDateOfBirth(data.dateOfBirth?.split("T")[0] || "2000-01-01");
+        setProfilePic(
+          data.profileImage
+            ? data.profileImage.startsWith("http")
+              ? data.profileImage
+              : `http://localhost:5000${data.profileImage}`
+            : "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-173524.jpg"
         );
-      } catch (error) {
-        console.error("Error fetching profile:", error);
+        
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+      }
+    };
+
+    const fetchCountries = async () => {
+      try {
+        const response = await fetch("https://restcountries.com/v3.1/all");
+        const data = await response.json();
+        const countryList = data.map(
+          (c: { name: { common: string }; cca2: string }) => ({
+            name: c.name.common,
+            code: c.cca2,
+          })
+        );
+        setCountries(
+          countryList.sort((a: { name: string }, b: { name: string }) =>
+            a.name.localeCompare(b.name)
+          )
+        );
+      } catch (err) {
+        console.error("Error fetching countries:", err);
       }
     };
 
     fetchProfile();
-  }, []);
-
-  // Fetch country list from API
-  useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const response = await fetch("https://restcountries.com/v3.1/all");
-        if (!response.ok) throw new Error("Failed to fetch countries");
-        const data = await response.json();
-
-        const countryList = data.map(
-          (country: { name: { common: string }; cca2: string }) => ({
-            name: country.name.common,
-            code: country.cca2,
-          })
-        );
-        setCountries(countryList.sort((a, b) => a.name.localeCompare(b.name)));
-      } catch (error) {
-        console.error("Error fetching countries:", error);
-      }
-    };
     fetchCountries();
   }, []);
 
-  // Handle Profile Photo Upload
-  const handleProfilePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setSelectedFile(file);
       setProfilePic(URL.createObjectURL(file));
+      setSelectedFile(file);
     }
   };
 
-  // Handle Profile Update
-  const handleUpdateProfile = async () => {
-    setError("");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const newErrors: { [key: string]: string } = {};
 
-    if (!userFullName || !email || !country || !dateOfBirth) {
-      setError("All fields are required.");
-      return;
+    if (!userFullName.trim() || userFullName.length < 2) {
+      newErrors.fullName = "Full name is required (min 2 characters)";
+    }
+    if (!country) {
+      newErrors.country = "Country is required";
+    }
+    if (!dateOfBirth) {
+      newErrors.dateOfBirth = "Date of birth is required";
     }
 
-    setLoading(true);
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
+
+    const token = localStorage.getItem("accessToken");
+    const userId = localStorage.getItem("userId");
 
     try {
-      const formData = new FormData();
-      formData.append("userFullName", userFullName);
-      formData.append("email", email);
-      formData.append("password", password);
-      formData.append("country", country);
-      formData.append("dateOfBirth", dateOfBirth);
-      if (selectedFile) {
-        formData.append("profileImage", selectedFile);
-      }
-
-      const token = localStorage.getItem("accessToken");
-
-      const response = await fetch("http://localhost:5000/api/auth/update-profile", {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
+      // 🔹 Step 1: Update text fields
+      const response = await fetch(
+        `http://localhost:5000/api/auth/update-profile/${userId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            userFullName,
+            country,
+            dateOfBirth,
+          }),
+        }
+      );
 
       const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Update failed");
+      if (!response.ok) throw new Error(data.message);
 
-      alert("Profile updated successfully!");
+      // 🔹 Step 2: Upload new profile image (if changed)
+      if (selectedFile) {
+        const formData = new FormData();
+        formData.append("profileImage", selectedFile);
 
-      if (data.profileImage) {
-        setProfilePic(data.profileImage);
+        const imageRes = await fetch(
+          `http://localhost:5000/api/auth/upload-profile-image/${userId}`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          }
+        );
+
+        const imgData = await imageRes.json();
+        if (!imageRes.ok) throw new Error(imgData.message);
+
+        setProfilePic(`${imgData.profileImage}?t=${Date.now()}`);
       }
-    } catch (error) {
-      setError(error instanceof Error ? error.message : "An unknown error occurred");
-    } finally {
-      setLoading(false);
+
+      alert("✅ Profile updated!");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert("❌ Update failed: " + err.message);
+      } else {
+        alert("❌ Update failed: An unknown error occurred.");
+      }
     }
   };
 
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gray-100 py-10 px-4 flex justify-center">
-        <div className="w-full max-w-3xl space-y-6">
+      <div className="bg-gradient-to-r bg-gray-100 min-h-screen flex items-center justify-center p-4">
+        <div className="font-sans w-full max-w-4xl rounded-2xl bg-white p-10 text-gray-900 shadow-xl">
+          <div className="flex flex-col md:flex-row justify-between mb-8 items-start">
+            <h2 className="mb-4 text-4xl font-bold text-blue-900">
+              Update Profile
+            </h2>
+            <div className="text-center">
+              <img
+                src={profilePic}
+                alt="Profile"
+                className="rounded-full w-32 h-32 mx-auto border-4 border-indigo-800 mb-3 hover:scale-105 transition-transform ring ring-gray-300"
+              />
+              <input
+                type="file"
+                id="upload_profile"
+                hidden
+                onChange={handleProfileChange}
+              />
+              <label
+                htmlFor="upload_profile"
+                className="inline-block cursor-pointer text-blue-700 text-sm mb-2"
+              >
+                Change Profile Picture
+              </label>
+            </div>
+          </div>
 
-          {/* Profile Header */}
-          <Card className="p-6 bg-white shadow-lg rounded-lg">
-            <CardBody className="flex items-center space-x-6">
-              <Avatar src={profilePic} size="lg" className="w-20 h-20 rounded-full" />
-              <div>
-                <h2 className="text-xl font-semibold">{userFullName}</h2>
-                <p className="text-gray-500">{email}</p>
-              </div>
-            </CardBody>
-          </Card>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Full Name
+              </label>
+              <input
+                type="text"
+                value={userFullName}
+                onChange={(e) => setUserFullName(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+              />
+              {errors.fullName && (
+                <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>
+              )}
+            </div>
 
-          {/* Edit Profile */}
-          <Card className="p-6 bg-white shadow-lg rounded-lg">
-            <CardHeader className="text-lg font-semibold">Edit Profile</CardHeader>
-            <CardBody className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Email (read-only)
+              </label>
+              <input
+                type="email"
+                value={email}
+                disabled
+                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
+              />
+            </div>
 
-              {/* Profile Picture Upload */}
-              <div className="flex flex-col space-y-3">
-                <label className="text-gray-700 font-semibold">Profile Picture</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleProfilePicChange}
-                  className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-indigo-500 file:text-white file:rounded-lg file:cursor-pointer"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Password (cannot be changed)
+              </label>
+              <input
+                type="password"
+                value={password}
+                disabled
+                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
+              />
+            </div>
 
-              {/* Full Name */}
-              <Input type="text" placeholder="Full Name" value={userFullName} onChange={(e) => setUserFullName(e.target.value)} />
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Confirm Password (cannot be changed)
+              </label>
+              <input
+                type="password"
+                value={confirmPassword}
+                disabled
+                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
+              />
+            </div>
 
-              {/* Email */}
-              <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-
-              {/* Password */}
-              <Input type="password" placeholder="New Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-
-              {/* Country Selection */}
-              <Select placeholder="Choose a country" value={country} onChange={(e) => setCountry(e.target.value)}>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Country
+              </label>
+              <Select
+                placeholder="Choose a country"
+                selectedKeys={[country]}
+                onChange={(e) => setCountry(e.target.value)}
+                classNames={{
+                  trigger:
+                    "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white",
+                  popoverContent:
+                    "bg-white z-50 rounded-md shadow-md border border-gray-200 text-black",
+                  listbox: "bg-white text-black",
+                }}
+              >
                 {countries.map((c) => (
                   <SelectItem key={c.code} value={c.name}>
                     {c.name}
                   </SelectItem>
                 ))}
               </Select>
+              {errors.country && (
+                <p className="text-red-500 text-sm mt-1">{errors.country}</p>
+              )}
+            </div>
 
-              {/* Date of Birth */}
-              <Input type="date" value={dateOfBirth} onChange={(e) => setDateOfBirth(e.target.value)} />
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Date of Birth
+              </label>
+              <input
+                type="date"
+                value={dateOfBirth}
+                onChange={(e) => setDateOfBirth(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+              />
+              {errors.dateOfBirth && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.dateOfBirth}
+                </p>
+              )}
+            </div>
 
-              {/* Save Changes Button */}
-              <Button className="w-full bg-indigo-500 text-white hover:bg-indigo-600 transition" onClick={handleUpdateProfile} disabled={loading}>
-                {loading ? "Updating..." : "Save Changes"}
-              </Button>
-
-              {error && <p className="text-red-500 text-center">{error}</p>}
-            </CardBody>
-          </Card>
+            <div className="flex justify-end space-x-4">
+              <button
+                type="submit"
+                className="px-4 py-2 bg-indigo-800 text-white rounded-lg hover:bg-indigo-700"
+              >
+                Save Changes
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </>

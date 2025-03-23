@@ -63,16 +63,15 @@ export default function Navbar() {
                 <div className="flex shrink-0 items-center">
                   <Link to="/feed">
                     <span className="sr-only">Vision Goal</span>
-                  <img
-                    className="h-11 w-14"
-                    src={logo}
-                    alt="Vision Goal Logo"
-                  />
+                    <img
+                      className="h-11 w-14"
+                      src={logo}
+                      alt="Vision Goal Logo"
+                    />
                   </Link>
                 </div>
 
-                {/* ✅ Show navigation only if user is logged in */}
-                {user && (
+                {
                   <div className="hidden sm:ml-6 sm:block">
                     <div className="flex space-x-4">
                       {navigation.map((item) => (
@@ -91,19 +90,22 @@ export default function Navbar() {
                       ))}
                     </div>
                   </div>
-                )}
+                }
               </div>
 
               {/* ✅ Profile & Log Out Section (Show only if user is logged in) */}
-              {user ? (
+              {
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                   <div className="ml-4 flex items-center space-x-4">
                     <Link to="/profile">
                       <img
                         className="size-8 rounded-full border-2 border-white"
                         src={
-                          user.profileImage ||
-                          "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-173524.jpg?t=st=1742145365~exp=1742148965~hmac=bd302071cdce6ac960ce3e2f8fee275629adf2d0ffcd7e26625d0175a2daf20a&w=740"
+                          user?.profileImage
+                            ? user.profileImage.startsWith("http")
+                              ? user.profileImage
+                              : `http://localhost:5000${user.profileImage}`
+                            : "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-173524.jpg"
                         }
                         alt="User Profile"
                       />
@@ -116,15 +118,7 @@ export default function Navbar() {
                     </button>
                   </div>
                 </div>
-              ) : (
-                <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                  <Link to="/">
-                    <button className="text-white bg-indigo-500 hover:bg-indigo-600 px-3 py-1 rounded-md text-sm font-medium">
-                      Login
-                    </button>
-                  </Link>
-                </div>
-              )}
+              }
             </div>
           </div>
         </>
