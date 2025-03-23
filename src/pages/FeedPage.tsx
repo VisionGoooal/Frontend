@@ -23,7 +23,7 @@ const FeedPage: React.FC = () => {
   const fetchPosts = async () => {
     try {
       setIsLoading(true);
-      const response = await axiosInstance.get("/post");
+      const response = await axiosInstance.get("api/posts");
       setPosts(response.data);
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -72,7 +72,7 @@ const FeedPage: React.FC = () => {
             : drawLogo,
       };
 
-      await axiosInstance.post("/prediction/post", post);
+      await axiosInstance.post("api/prediction/post", post);
     } catch (error) {
       console.error("Error reposting prediction:", error);
     }
@@ -108,7 +108,7 @@ const FeedPage: React.FC = () => {
       }
       formData.append("likes", "0");
 
-      await axiosInstance.post("/post", formData, {
+      await axiosInstance.post("/api/posts", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
