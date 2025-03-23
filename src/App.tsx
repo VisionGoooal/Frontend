@@ -25,7 +25,7 @@ const App = () => {
         <Route path="/chat" element={<Chat />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<ContactPage />} />
-        <Route path="/policy" element={<PrivacyPolicyPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
       </Routes>
       <Footer />
     </>
