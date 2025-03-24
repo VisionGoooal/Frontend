@@ -31,6 +31,7 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId }) => {
 
         const postData = postResponse.data;
         setPost(postData);
+        console.log(postData);
         setLikes(postData.likes);
         setComments(
           Array.isArray(commentsResponse.data) ? commentsResponse.data : []

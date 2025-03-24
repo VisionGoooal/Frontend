@@ -106,7 +106,7 @@ const FeedPage: React.FC = () => {
       formData.append("title", "New Post");
       formData.append("content", postContent);
       const user = JSON.parse(localStorage.getItem("user") || "{}");
-      formData.append("owner", user.fullName || "Anonymous");
+      formData.append("owner", user.id);
 
       if (selectedImage) {
         formData.append("image", selectedImage);
