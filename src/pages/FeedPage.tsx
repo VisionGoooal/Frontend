@@ -138,7 +138,7 @@ const FeedPage: React.FC = () => {
             <div className="flex items-start space-x-4">
               <img
                 src="/gamer.png"
-                alt="User Avatar"
+                alt={avatar}
                 className="w-10 h-10 rounded-full"
               />
               <textarea

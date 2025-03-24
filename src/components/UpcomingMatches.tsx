@@ -1,4 +1,3 @@
-import React from "react";
 
 const matches = [
   { id: 1, title: "Match Prediction", date: "Sat 16 June", location: "Town's Garden" },

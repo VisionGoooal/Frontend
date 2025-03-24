@@ -101,7 +101,7 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId }) => {
           />
           <div>
             <h3 className="text-sm font-semibold text-gray-900 dark:text-black">
-              {post.owner || "Anonymous"}
+              {post.owner.userFullName || "Anonymous"}
             </h3>
             <p className="text-xs text-gray-500 dark:text-gray-400">Just now</p>
           </div>

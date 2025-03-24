@@ -1,9 +1,13 @@
-import { useState } from "react";
-import { Card, CardBody, Avatar, Button } from "@nextui-org/react";
+import React, { useState } from "react";
+import { Card, CardBody, Avatar } from "@nextui-org/react";
 import { HeartIcon, ChatBubbleLeftIcon, BookmarkIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconFilled, BookmarkIcon as BookmarkIconFilled } from "@heroicons/react/24/solid";
+import type {Post} from "../../types/Post"
 
-const Post = ({ post }: { post: any }) => {
+interface postProps{
+  post : Post;
+}
+const Post  : React.FC<postProps>= ({ post }) => {
   const [likes, setLikes] = useState(post.likes);
   const [bookmarked, setBookmarked] = useState(false);
   const [liked, setLiked] = useState(false);
@@ -13,13 +17,13 @@ const Post = ({ post }: { post: any }) => {
       <CardBody>
         <div className="flex items-start gap-4">
           {/* User Avatar */}
-          <Avatar src={post.user.profilePic} className="w-12 h-12" />
+          <Avatar src={post.owner.profileImage} className="w-12 h-12" />
 
           <div className="w-full">
             {/* Username & Handle */}
             <div className="flex justify-between items-center">
               <h3 className="font-bold text-gray-900">
-                {post.user.name} <span className="text-gray-500 text-sm">{post.user.username}</span>
+                {post.owner.userFullName} <span className="text-gray-500 text-sm">{post.owner.userFullName}</span>
               </h3>
             </div>
 
@@ -50,7 +54,9 @@ const Post = ({ post }: { post: any }) => {
               {/* Comment Button */}
               <button className="flex items-center gap-2 hover:text-blue-500 transition">
                 <ChatBubbleLeftIcon className="w-6 h-6" />
-                <span className="text-lg">{post.comments.length}</span>
+                {/* <span className="text-lg">{post.comments.length}</span> */}
+                {/* TODO :: add comments or do something about it */}
+                <span className="text-lg">"1"</span>
               </button>
 
               {/* Bookmark Button */}
