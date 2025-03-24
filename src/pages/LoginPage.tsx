@@ -19,6 +19,14 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+    if (!email || !password) {
+      setError("Please enter both email and password");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
     try {
       const response = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
@@ -29,11 +37,13 @@ const LoginPage = () => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Login failed");
 
-      localStorage.setItem("accessToken", data.accessToken);
-      localStorage.setItem("refreshToken", data.refreshToken);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      localStorage.setItem("userId", data.user.id);
-      
+      const { accessToken, refreshToken, user } = data;
+
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("userId", user.id); // Or user._id depending on your backend
+
       navigate("/feed");
     } catch (error) {
       if (error instanceof Error) {
@@ -41,6 +51,8 @@ const LoginPage = () => {
       } else {
         setError("An unknown error occurred");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -50,11 +62,10 @@ const LoginPage = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="flex w-full max-w-6xl items-center justify-between relative">
-        {/* 🔥 AI-Inspired Left Side - Bright */}
+      <div className="flex w-full max-w-6xl items-center justify-between px-4 md:px-8 relative">
+        {/* 🔥 Left Side - AI Glow */}
         <div className="hidden md:flex flex-col w-1/2 items-center justify-center relative text-black">
-          <div className="absolute inset-0">
-            {/* AI Bright Glow Effects */}
+          <div className="absolute inset-0 pointer-events-none">
             <div className="absolute w-96 h-96 bg-gradient-to-r from-indigo-300 to-purple-300 blur-[120px] opacity-70 animate-pulse"></div>
             <div className="absolute top-0 left-0 w-72 h-72 bg-blue-300 opacity-60 rounded-full blur-[100px]"></div>
           </div>
@@ -67,18 +78,19 @@ const LoginPage = () => {
             analytics to stay ahead of the game!
           </p>
 
-          {/* Glowing Orbs - AI Style */}
           <div className="absolute top-10 right-10 w-44 h-44 bg-purple-300 opacity-50 rounded-full blur-[100px]"></div>
           <div className="absolute bottom-10 left-20 w-56 h-56 bg-indigo-300 opacity-40 rounded-full blur-[120px]"></div>
         </div>
 
-        {/* 🔐 Right Side - Login Form */}
-        <Card className="w-full max-w-md bg-white text-gray-800 p-8 rounded-lg shadow-xl">
+        {/* 🔐 Right Side - Login Card */}
+        <Card className="w-full max-w-md bg-white text-gray-800 p-8 rounded-lg shadow-xl z-10">
           <CardHeader className="text-center text-2xl font-bold pb-4">
             Sign In
           </CardHeader>
           <CardBody className="flex flex-col gap-6">
-            {error && <p className="text-red-500 text-center">{error}</p>}
+            {error && (
+              <p className="text-red-500 text-center text-sm">{error}</p>
+            )}
 
             <Input
               type="email"
@@ -87,6 +99,7 @@ const LoginPage = () => {
               className="w-full h-12"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              isRequired
             />
 
             <Input
@@ -96,6 +109,7 @@ const LoginPage = () => {
               className="w-full h-12"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              isRequired
             />
 
             <Button
@@ -120,7 +134,7 @@ const LoginPage = () => {
 
             <Spacer y={2} />
 
-            <div className="text-center">
+            <div className="text-center text-sm">
               <span className="text-gray-500">Don't have an account?</span>{" "}
               <Link
                 href="/register"

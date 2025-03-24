@@ -14,6 +14,9 @@ const FeedPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const avatar = user.profileImage || "/gamer.png";
+
   // Handle emoji selection
   const onEmojiClick = (emojiData: EmojiClickData) => {
     setPostContent((prevContent) => prevContent + emojiData.emoji);
@@ -102,7 +105,9 @@ const FeedPage: React.FC = () => {
       const formData = new FormData();
       formData.append("title", "New Post");
       formData.append("content", postContent);
-      formData.append("owner", "some-user-id");
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      formData.append("owner", user.fullName || "Anonymous");
+
       if (selectedImage) {
         formData.append("image", selectedImage);
       }
@@ -127,67 +132,83 @@ const FeedPage: React.FC = () => {
       <Navbar />
       <div className="container mx-auto p-6">
         {/* Post Creation */}
-        <div className="add-post-container bg-gray-100 p-4 rounded-lg shadow-md">
-          <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
-            <textarea
-              value={postContent}
-              onChange={handleContentChange}
-              placeholder="What's on your mind?"
-              rows={4}
-              className="p-2 border rounded-lg w-full"
-              required
-            />
-            <div className="flex items-center space-x-4">
-              {/* Image upload */}
-              <button
-                type="button"
-                onClick={() => document.getElementById("imageInput")?.click()}
-                className="p-2 bg-blue-500 text-white rounded-lg"
-              >
-                📷 Add Image
-              </button>
-              <input
-                id="imageInput"
-                type="file"
-                accept="image/*"
-                hidden
-                onChange={handleImageSelect}
+        <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow mb-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Top Row: Avatar + Textarea */}
+            <div className="flex items-start space-x-4">
+              <img
+                src="/gamer.png"
+                alt="User Avatar"
+                className="w-10 h-10 rounded-full"
               />
+              <textarea
+                value={postContent}
+                onChange={handleContentChange}
+                placeholder="What's on your mind?"
+                rows={3}
+                className="flex-1 p-3 text-sm bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white resize-none"
+              />
+            </div>
 
-              {/* Emoji Picker */}
-              <button
-                type="button"
-                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                className="p-2 bg-yellow-500 text-white rounded-lg"
-              >
-                😀 Emoji
-              </button>
+            {/* Image Preview */}
+            {selectedImage && (
+              <div className="pl-14">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Selected Image: {selectedImage.name}
+                </p>
+                <img
+                  src={URL.createObjectURL(selectedImage)}
+                  alt="Preview"
+                  className="mt-2 max-w-xs rounded-lg shadow"
+                />
+              </div>
+            )}
 
-              {showEmojiPicker && (
-                <div className="absolute z-10 bg-white border rounded-lg shadow-lg">
-                  <EmojiPicker onEmojiClick={onEmojiClick} />
-                </div>
-              )}
+            {/* Buttons Row */}
+            <div className="flex items-center justify-between pl-14 flex-wrap gap-3">
+              <div className="flex gap-3">
+                {/* Image Upload */}
+                <button
+                  type="button"
+                  onClick={() => document.getElementById("imageInput")?.click()}
+                  className="flex items-center gap-1 px-3 py-2 text-sm font-medium bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                >
+                  📷 Image
+                </button>
+                <input
+                  id="imageInput"
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={handleImageSelect}
+                />
 
-              {/* Submit Button */}
+                {/* Emoji Picker */}
+                <button
+                  type="button"
+                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                  className="flex items-center gap-1 px-3 py-2 text-sm font-medium bg-yellow-400 text-white rounded-lg hover:bg-yellow-500"
+                >
+                  😀 Emoji
+                </button>
+              </div>
+
+              {/* Post Button */}
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="p-2 bg-green-500 text-white rounded-lg"
+                className="px-5 py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition disabled:opacity-60"
               >
                 {isSubmitting ? "Posting..." : "Post"}
               </button>
             </div>
 
-            {/* Image Preview */}
-            {selectedImage && (
-              <div>
-                <p>Selected Image: {selectedImage.name}</p>
-                <img
-                  src={URL.createObjectURL(selectedImage)}
-                  alt="Preview"
-                  className="max-w-xs mt-2"
-                />
+            {/* Emoji Picker UI */}
+            {showEmojiPicker && (
+              <div className="relative z-50 mt-2 pl-14">
+                <div className="absolute">
+                  <EmojiPicker onEmojiClick={onEmojiClick} />
+                </div>
               </div>
             )}
           </form>
