@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../../Services/axiosConfig";
 import { Comment } from "../../types/Comment";
 import { Post } from "../../types/Post";
+import { User } from "../../types/user";
 
 interface PostWithCommentsProps {
   postId: string;
@@ -16,8 +17,7 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId }) => {
   const [showAllComments, setShowAllComments] = useState<boolean>(false);
   const [newComment, setNewComment] = useState<string>("");
 
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const userFullName = user?.fullName || "Anonymous";
+  const user : User = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
     const fetchPostAndComments = async () => {
@@ -31,7 +31,6 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId }) => {
 
         const postData = postResponse.data;
         setPost(postData);
-        console.log(postData);
         setLikes(postData.likes);
         setComments(
           Array.isArray(commentsResponse.data) ? commentsResponse.data : []
@@ -68,13 +67,11 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId }) => {
 
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) return;
-
     try {
       const response = await axiosInstance.post(`/api/comments/${postId}`, {
-        title: "title",
         content: newComment,
         postId: postId,
-        owner: userFullName,
+        owner: user.id,
       });
 
       setComments((prevComments) => [...prevComments, response.data]);
@@ -102,7 +99,7 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId }) => {
           />
           <div>
             <h3 className="text-sm font-semibold text-gray-900 dark:text-black">
-              {post.owner.userFullName || "Anonymous"}
+              {post.owner.userFullName }
             </h3>
             <p className="text-xs text-gray-500 dark:text-gray-400">Just now</p>
           </div>
@@ -167,13 +164,13 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId }) => {
       {/* Comment List */}
       <div className="space-y-4">
         {commentsToDisplay.length > 0 ? (
-          commentsToDisplay
+          comments
             .slice()
             .reverse()
             .map((comment) => (
               <div key={comment._id} className="border-t pt-4">
                 <p className="text-sm font-semibold text-gray-800 dark:text-black">
-                  {comment.owner}
+                  {comment.owner.userFullName}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
                   {comment.content}
