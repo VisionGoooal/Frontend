@@ -24,7 +24,7 @@ const ProfilePage = () => {
 
       try {
         const response = await fetch(
-          `http://localhost:5000/api/auth/profile/${userId}`,
+          import.meta.env.VITE_SERVER_API_URL+`/api/auth/profile/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -42,7 +42,7 @@ const ProfilePage = () => {
           data.profileImage
             ? data.profileImage.startsWith("http")
               ? data.profileImage
-              : `http://localhost:5000${data.profileImage}`
+              : import.meta.env.VITE_SERVER_API_URL+`/${data.profileImage}`
             : "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-173524.jpg"
         );
         
@@ -106,7 +106,7 @@ const ProfilePage = () => {
     try {
       // 🔹 Step 1: Update text fields
       const response = await fetch(
-        `http://localhost:5000/api/auth/update-profile/${userId}`,
+        import.meta.env.VITE_SERVER_API_URL+`/api/auth/update-profile/${userId}`,
         {
           method: "PUT",
           headers: {
@@ -130,7 +130,7 @@ const ProfilePage = () => {
         formData.append("profileImage", selectedFile);
 
         const imageRes = await fetch(
-          `http://localhost:5000/api/auth/upload-profile-image/${userId}`,
+          import.meta.env.VITE_SERVER_API_URL+`/api/auth/upload-profile-image/${userId}`,
           {
             method: "POST",
             headers: {

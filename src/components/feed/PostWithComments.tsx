@@ -121,7 +121,7 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId }) => {
             src={
               post.image.startsWith("http")
                 ? post.image
-                : `http://localhost:5000${post.image}`
+                : import.meta.env.VITE_SERVER_API_URL+`/${post.image}`
             }
             alt="Post"
             className="rounded-lg max-w-full"
