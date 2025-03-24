@@ -10,7 +10,7 @@ import Chat from "./pages/ChatPage";
 import Footer from "./components/layout/Footer";
 import ContactPage from "./pages/ContactPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
-
+import Terms from "./pages/Terms";
 
 
 const App = () => {
@@ -26,6 +26,7 @@ const App = () => {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms" element={<Terms/>}/>
       </Routes>
       <Footer />
     </>

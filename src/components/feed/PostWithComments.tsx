@@ -152,7 +152,7 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId }) => {
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Write your comment..."
-            className="w-full p-2 border rounded-lg text-sm dark:bg-gray-200 dark:text-white"
+            className="w-full p-2 border rounded-lg text-sm dark:bg-gray-800 dark:text-white"
           />
           <button
             onClick={handleCommentSubmit}
