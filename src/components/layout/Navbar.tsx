@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+// import { useState, useEffect } from "react";
 import { Disclosure, DisclosureButton } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useLocation, Link, useNavigate } from "react-router-dom";
@@ -8,7 +8,6 @@ const navigation = [
   { name: "Feed", href: "/feed" },
   { name: "Predictions", href: "/predict" },
   { name: "Profile", href: "/profile" },
-  { name: "Chat", href: "/chat" },
 ];
 
 function classNames(...classes: string[]) {
@@ -18,25 +17,25 @@ function classNames(...classes: string[]) {
 export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [user, setUser] = useState<{
-    username: string;
-    profileImage?: string;
-  } | null>(null);
+  // const [user, setUser] = useState<{
+  //   username: string;
+  //   profileImage?: string;
+  // } | null>(null);
 
-  // ✅ Check authentication state
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
+  // Check authentication state
+  // useEffect(() => {
+  //   const storedUser = localStorage.getItem("user");
+  //   if (storedUser) {
+  //     setUser(JSON.parse(storedUser));
+  //   }
+  // }, []);
 
-  // ✅ Handle Logout
+  // Handle Logout
   const handleLogout = () => {
     localStorage.removeItem("accessToken"); // Remove JWT
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
-    setUser(null); // Update UI
+    // setUser(null); // Update UI
     navigate("/"); // Redirect to Home
   };
 
@@ -97,7 +96,7 @@ export default function Navbar() {
               {
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                   <div className="ml-4 flex items-center space-x-4">
-                    <Link to="/profile">
+                    {/* <Link to="/profile">
                       <img
                         className="size-8 rounded-full border-2 border-white"
                         src={
@@ -109,7 +108,7 @@ export default function Navbar() {
                         }
                         alt="User Profile"
                       />
-                    </Link>
+                    </Link> */}
                     <button
                       onClick={handleLogout}
                       className="text-white bg-red-500 hover:bg-red-600 px-3 py-1 rounded-md text-sm font-medium"

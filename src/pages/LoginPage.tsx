@@ -60,25 +60,27 @@ const LoginPage = () => {
     }
   };
 
-  const handleGoogleSuccessLogin = () => {
-    // window.location.href = import.meta.env.VITE_SERVER_API_URL+"/api/auth/google";
+  const handleGoogleSuccessLogin = async (credential: string) => {
+    setLoading(true);
+    setError("");
+  
     try {
-      const response = await fetch(import.meta.env.VITE_SERVER_API_URL+"/api/auth/googleAuth", {
+      const response = await fetch(import.meta.env.VITE_SERVER_API_URL + "/api/auth/googleAuth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: ,
+        body: JSON.stringify({ credential }),
       });
-
+  
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Login failed");
-
+  
       const { accessToken, refreshToken, user } = data;
-
+  
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("userId", user.id); // Or user._id depending on your backend
-
+      localStorage.setItem("userId", user.id);
+  
       navigate("/feed");
     } catch (error) {
       if (error instanceof Error) {
@@ -90,7 +92,7 @@ const LoginPage = () => {
       setLoading(false);
     }
   };
-  };
+  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -153,11 +155,19 @@ const LoginPage = () => {
             </Button>
 
             <GoogleLogin
-            onSuccess={handleGoogleSuccessLogin}
-            onError={() => {
-              console.log('Login Failed');
-            }}
-          />
+              onSuccess={(credentialResponse) => {
+              const credential = credentialResponse.credential;
+              if (credential) {
+                handleGoogleSuccessLogin(credential);
+              } else {
+                setError("Google login failed: No credential received");
+              }
+              }}
+                onError={() => {
+                setError("Google login failed");
+             }}
+               />
+
 
             <Spacer y={2} />
 
