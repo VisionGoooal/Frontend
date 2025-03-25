@@ -7,6 +7,6 @@ export interface Post {
       userFullName : string;
       profileImage : string;
     };
-    likes: number;
+    likes: [number];
     image?: string;
   }

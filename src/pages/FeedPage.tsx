@@ -5,6 +5,7 @@ import { Post } from "../types/Post";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import { Prediction } from "../types/Prediction";
 import Navbar from "../components/layout/Navbar";
+import {User} from '../types/user'
 
 const FeedPage: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -14,13 +15,31 @@ const FeedPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const user : User  = JSON.parse(localStorage.getItem("user") || "{}");
   const avatar = user.profileImage || "/gamer.png";
 
   // Handle emoji selection
   const onEmojiClick = (emojiData: EmojiClickData) => {
     setPostContent((prevContent) => prevContent + emojiData.emoji);
   };
+
+  const handleDeletePost = async (postId: string) => {
+      try {
+        // Optional: confirm with the user
+        const confirmDelete = window.confirm("Are you sure you want to delete this post?");
+        if (!confirmDelete) return;
+    
+        // Call your delete API
+        await axiosInstance.delete(`/api/posts/${postId}`);
+    
+        // Optionally, update state (e.g., remove the post from list)
+        setPosts((prevPosts) => prevPosts.filter((post) => post._id !== postId));
+    
+        console.log("Post deleted successfully");
+      } catch (error) {
+        console.error("Error deleting post:", error);
+      }
+    };
 
   // Fetch all posts
   const fetchPosts = async () => {
@@ -137,7 +156,7 @@ const FeedPage: React.FC = () => {
             {/* Top Row: Avatar + Textarea */}
             <div className="flex items-start space-x-4">
               <img
-                src="/gamer.png"
+                src={user.profileImage}
                 alt={avatar}
                 className="w-10 h-10 rounded-full"
               />
@@ -226,7 +245,7 @@ const FeedPage: React.FC = () => {
                 key={post._id}
                 className="my-6 p-4 border rounded-lg shadow-md"
               >
-                <PostWithComments postId={post._id} />
+                <PostWithComments postId={post._id} deleteHandler={handleDeletePost}  />
               </div>
             ))
         ) : (

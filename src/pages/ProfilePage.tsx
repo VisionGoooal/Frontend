@@ -33,7 +33,7 @@ const ProfilePage = () => {
         );
         const data = await response.json();
         if (!response.ok) throw new Error(data.message);
-
+        console.log(data.profileImage)
         setUserFullName(data.userFullName);
         setEmail(data.email);
         setCountry(data.country);
@@ -173,6 +173,7 @@ const ProfilePage = () => {
               />
               <input
                 type="file"
+                accept="image/*"
                 id="upload_profile"
                 hidden
                 onChange={handleProfileChange}

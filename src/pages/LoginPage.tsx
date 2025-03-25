@@ -10,6 +10,9 @@ import {
   Spinner,
 } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
+import { GoogleLogin } from '@react-oauth/google';
+
+
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -17,6 +20,7 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -56,8 +60,36 @@ const LoginPage = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    window.location.href = import.meta.env.VITE_SERVER_API_URL+"/api/auth/google";
+  const handleGoogleSuccessLogin = () => {
+    // window.location.href = import.meta.env.VITE_SERVER_API_URL+"/api/auth/google";
+    try {
+      const response = await fetch(import.meta.env.VITE_SERVER_API_URL+"/api/auth/googleAuth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: ,
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Login failed");
+
+      const { accessToken, refreshToken, user } = data;
+
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("userId", user.id); // Or user._id depending on your backend
+
+      navigate("/feed");
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unknown error occurred");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
   };
 
   return (
@@ -120,17 +152,12 @@ const LoginPage = () => {
               {loading ? <Spinner color="white" size="sm" /> : "Login"}
             </Button>
 
-            <Button
-              className="w-full h-12 flex items-center justify-center gap-3 border border-gray-300 bg-white text-gray-700 rounded-full shadow-lg hover:bg-gray-100 transition-all duration-300"
-              onClick={handleGoogleLogin}
-            >
-              <img
-                src="https://www.svgrepo.com/show/303108/google-icon-logo.svg"
-                alt="Google Logo"
-                className="w-5 h-5"
-              />
-              <span className="font-medium">Sign in with Google</span>
-            </Button>
+            <GoogleLogin
+            onSuccess={handleGoogleSuccessLogin}
+            onError={() => {
+              console.log('Login Failed');
+            }}
+          />
 
             <Spacer y={2} />
 
