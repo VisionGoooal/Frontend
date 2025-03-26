@@ -115,7 +115,7 @@ const Chat = () => {
         <>
           {!selectedUser ? (
             // Display list of users
-            <Box>
+            <Box sx={{ maxHeight: 400, overflowY: 'auto' }}>
               
               <List>
                 {users.filter((user) => user.id !== currentUser.id).map((user) => (

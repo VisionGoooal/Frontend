@@ -2,29 +2,29 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/layout/Navbar";
 import { Select, SelectItem } from "@nextui-org/react";
+import { User } from "../types/user";
 
 const ProfilePage = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [profilePic, setProfilePic] = useState("../assets/man.png");
   const [userFullName, setUserFullName] = useState("John Doe");
-  const [email, setEmail] = useState("john.doe@example.com");
-  const [password] = useState("********"); // Read-only dummy placeholder
-  const [confirmPassword] = useState("********"); // Read-only dummy placeholder
   const [country, setCountry] = useState("Israel");
   const [countries, setCountries] = useState<{ name: string; code: string }[]>(
     []
   );
   const [dateOfBirth, setDateOfBirth] = useState("2000-01-01");
+  const [userPosts, setUserPosts] = useState<any[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+      const user : User = JSON.parse(localStorage.getItem("user") || "{}");
     const fetchProfile = async () => {
-      const token = localStorage.getItem("accessToken");
-      const userId = localStorage.getItem("userId");
+      
 
       try {
         const response = await fetch(
-          import.meta.env.VITE_SERVER_API_URL+`/api/auth/profile/${userId}`,
+          import.meta.env.VITE_SERVER_API_URL+`/api/auth/profile/${user.id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -35,22 +35,21 @@ const ProfilePage = () => {
         if (!response.ok) throw new Error(data.message);
         console.log(data.profileImage)
         setUserFullName(data.userFullName);
-        setEmail(data.email);
         setCountry(data.country);
         setDateOfBirth(data.dateOfBirth?.split("T")[0] || "2000-01-01");
-        setProfilePic(
-          data.profileImage
-            ? data.profileImage.startsWith("http")
-              ? data.profileImage
-              : import.meta.env.VITE_SERVER_API_URL+`/${data.profileImage}`
-            : "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-173524.jpg"
-        );
+        const profileImageURL = data.profileImage?.startsWith("http")
+        ? data.profileImage
+        : `${import.meta.env.VITE_SERVER_API_URL}${data.profileImage}`;
+      
+        setProfilePic(profileImageURL);
+      
+
+        console.log(profilePic)
         
       } catch (err) {
         console.error("Error fetching profile:", err);
       }
     };
-
     const fetchCountries = async () => {
       try {
         const response = await fetch("https://restcountries.com/v3.1/all");
@@ -71,8 +70,31 @@ const ProfilePage = () => {
       }
     };
 
+    const fetchUserPosts = async () => {
+    
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_SERVER_API_URL}/api/posts/user/${user.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+    
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message);
+    
+        setUserPosts(data);
+      } catch (err) {
+        console.error("❌ Failed to fetch user posts:", err);
+      }
+    };
+    
+
     fetchProfile();
     fetchCountries();
+    fetchUserPosts();
   }, []);
 
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -156,6 +178,16 @@ const ProfilePage = () => {
     }
   };
 
+  const serverURL = import.meta.env.VITE_SERVER_API_URL;
+
+const getImageURL = (imagePath: string) => {
+  if (!imagePath) return "";
+  return imagePath.includes(serverURL)
+    ? imagePath
+    : `${serverURL}${imagePath}`;
+};
+
+
   return (
     <>
       <Navbar />
@@ -166,11 +198,12 @@ const ProfilePage = () => {
               Update Profile
             </h2>
             <div className="text-center">
-              <img
+            <img
                 src={profilePic}
                 alt="Profile"
                 className="rounded-full w-32 h-32 mx-auto border-4 border-indigo-800 mb-3 hover:scale-105 transition-transform ring ring-gray-300"
               />
+
               <input
                 type="file"
                 accept="image/*"
@@ -201,42 +234,6 @@ const ProfilePage = () => {
               {errors.fullName && (
                 <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>
               )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Email (read-only)
-              </label>
-              <input
-                type="email"
-                value={email}
-                disabled
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Password (cannot be changed)
-              </label>
-              <input
-                type="password"
-                value={password}
-                disabled
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Confirm Password (cannot be changed)
-              </label>
-              <input
-                type="password"
-                value={confirmPassword}
-                disabled
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
-              />
             </div>
 
             <div>
@@ -292,6 +289,36 @@ const ProfilePage = () => {
               </button>
             </div>
           </form>
+
+          <div className="mt-12">
+  <h3 className="text-2xl font-semibold text-indigo-700 mb-4">My Posts</h3>
+
+  {userPosts.length === 0 ? (
+    <p className="text-gray-500">You haven’t posted anything yet.</p>
+  ) : (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {userPosts.map((post) => (
+        <div
+          key={post._id}
+          className="p-4 bg-white shadow-md border rounded-lg"
+        >
+          <p className="text-gray-800 whitespace-pre-wrap">{post.content}</p>
+
+                  {post.image && (
+          <img
+            src={getImageURL(post.image)}
+            alt="Post"
+            className="mt-3 w-full h-auto rounded"
+          />
+        )}
+
+
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
         </div>
       </div>
     </>

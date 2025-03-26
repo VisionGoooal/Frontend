@@ -59,41 +59,49 @@ const FeedPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const storedPrediction = window.localStorage.getItem("prediction");
-    if (storedPrediction) {
-      const prediction: Prediction = JSON.parse(storedPrediction);
-      addPostByPrediction(prediction);
-    }
-    window.localStorage.removeItem("prediction");
-    fetchPosts();
+    const checkAndRepost = async () => {
+      const storedPrediction = window.localStorage.getItem("prediction");
+      if (storedPrediction) {
+        const prediction: Prediction = JSON.parse(storedPrediction);
+        await addPostByPrediction(prediction);
+        window.localStorage.removeItem("prediction");
+      }
+      await fetchPosts(); // קורה רק אחרי שהפוסט התווסף
+    };
+  
+    checkAndRepost();
   }, []);
+  
 
   const addPostByPrediction = async (prediction: Prediction) => {
     let team1Logo = "";
     let team2Logo = "";
     try {
-      const logosResponse = await fetch("/src/constants/teamsLogos.json");
+      const logosResponse = await fetch("/teamsLogos.json");
       const data = await logosResponse.json();
       team1Logo = data[prediction.Team1];
       team2Logo = data[prediction.Team2];
       const drawLogo = data["Draw"];
 
-      const post = {
-        title: `${prediction.Team1} VS ${prediction.Team2} - AI Prediction`,
-        content:
-          prediction.Winner !== "Draw"
-            ? `VisionGoal AI predicts that ${prediction.Winner} will win ${prediction.Team1Score}-${prediction.Team2Score}!`
-            : `VisionGoal AI predicts a draw ${prediction.Team1Score}-${prediction.Team2Score}.`,
-        owner: "some-user-id",
-        likes: 0,
-        image:
-          prediction.Winner === prediction.Team1
-            ? team1Logo
-            : prediction.Winner === prediction.Team2
-            ? team2Logo
-            : drawLogo,
-      };
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
 
+const post = {
+  title: `${prediction.Team1} VS ${prediction.Team2} - AI Prediction`,
+  content:
+    prediction.Winner !== "Draw"
+      ? `VisionGoal AI predicts that ${prediction.Winner} will win ${prediction.Team1Score}-${prediction.Team2Score}!`
+      : `VisionGoal AI predicts a draw ${prediction.Team1Score}-${prediction.Team2Score}.`,
+  owner: user.id,
+  likes: [],
+  image:
+    prediction.Winner === prediction.Team1
+      ? team1Logo
+      : prediction.Winner === prediction.Team2
+      ? team2Logo
+      : drawLogo,
+};
+
+      console.log("🚀 Sending post:", post);
       await axiosInstance.post("api/prediction/post", post);
     } catch (error) {
       console.error("Error reposting prediction:", error);

@@ -26,7 +26,6 @@ const App = () => {
         <Route path="/feed" element={<FeedPage />} />
         <Route path="/predict" element={<Predictions />} />
         <Route path="/profile" element={<Profile />} />
-        {/* <Route path="/chat" element={<Chat />} /> */}
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
