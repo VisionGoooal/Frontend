@@ -2,14 +2,12 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/layout/Navbar";
 import { Select, SelectItem } from "@nextui-org/react";
+import { User } from "../types/user";
 
 const ProfilePage = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [profilePic, setProfilePic] = useState("../assets/man.png");
   const [userFullName, setUserFullName] = useState("John Doe");
-  const [email, setEmail] = useState("john.doe@example.com");
-  const [password] = useState("********"); // Read-only dummy placeholder
-  const [confirmPassword] = useState("********"); // Read-only dummy placeholder
   const [country, setCountry] = useState("Israel");
   const [countries, setCountries] = useState<{ name: string; code: string }[]>(
     []
@@ -19,13 +17,14 @@ const ProfilePage = () => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+      const user : User = JSON.parse(localStorage.getItem("user") || "{}");
     const fetchProfile = async () => {
-      const token = localStorage.getItem("accessToken");
-      const userId = localStorage.getItem("userId");
+      
 
       try {
         const response = await fetch(
-          import.meta.env.VITE_SERVER_API_URL+`/api/auth/profile/${userId}`,
+          import.meta.env.VITE_SERVER_API_URL+`/api/auth/profile/${user.id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -36,7 +35,6 @@ const ProfilePage = () => {
         if (!response.ok) throw new Error(data.message);
         console.log(data.profileImage)
         setUserFullName(data.userFullName);
-        setEmail(data.email);
         setCountry(data.country);
         setDateOfBirth(data.dateOfBirth?.split("T")[0] || "2000-01-01");
         const profileImageURL = data.profileImage?.startsWith("http")
@@ -52,7 +50,6 @@ const ProfilePage = () => {
         console.error("Error fetching profile:", err);
       }
     };
-
     const fetchCountries = async () => {
       try {
         const response = await fetch("https://restcountries.com/v3.1/all");
@@ -74,12 +71,10 @@ const ProfilePage = () => {
     };
 
     const fetchUserPosts = async () => {
-      const token = localStorage.getItem("accessToken");
-      const userId = localStorage.getItem("userId");
     
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_SERVER_API_URL}/api/posts/user/${userId}`,
+          `${import.meta.env.VITE_SERVER_API_URL}/api/posts/user/${user.id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -99,7 +94,7 @@ const ProfilePage = () => {
 
     fetchProfile();
     fetchCountries();
-    fetchUserPosts(); // ⬅️ כאן
+    fetchUserPosts();
   }, []);
 
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -183,6 +178,16 @@ const ProfilePage = () => {
     }
   };
 
+  const serverURL = import.meta.env.VITE_SERVER_API_URL;
+
+const getImageURL = (imagePath: string) => {
+  if (!imagePath) return "";
+  return imagePath.includes(serverURL)
+    ? imagePath
+    : `${serverURL}${imagePath}`;
+};
+
+
   return (
     <>
       <Navbar />
@@ -229,42 +234,6 @@ const ProfilePage = () => {
               {errors.fullName && (
                 <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>
               )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Email (read-only)
-              </label>
-              <input
-                type="email"
-                value={email}
-                disabled
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Password (cannot be changed)
-              </label>
-              <input
-                type="password"
-                value={password}
-                disabled
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Confirm Password (cannot be changed)
-              </label>
-              <input
-                type="password"
-                value={confirmPassword}
-                disabled
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
-              />
             </div>
 
             <div>
@@ -335,13 +304,15 @@ const ProfilePage = () => {
         >
           <p className="text-gray-800 whitespace-pre-wrap">{post.content}</p>
 
-          {post.image && (
-            <img
-              src={`${import.meta.env.VITE_SERVER_API_URL}${post.image}`}
-              alt="Post"
-              className="mt-3 w-full h-auto rounded"
-            />
-          )}
+                  {post.image && (
+          <img
+            src={getImageURL(post.image)}
+            alt="Post"
+            className="mt-3 w-full h-auto rounded"
+          />
+        )}
+
+
         </div>
       ))}
     </div>

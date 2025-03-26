@@ -63,12 +63,11 @@ const LoginPage = () => {
   const handleGoogleSuccessLogin = async (credential: string) => {
     setLoading(true);
     setError("");
-  
     try {
       const response = await fetch(import.meta.env.VITE_SERVER_API_URL + "/api/auth/googleAuth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ credential }),
+        body:  credential ,
       });
   
       const data = await response.json();
@@ -79,7 +78,6 @@ const LoginPage = () => {
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("userId", user.id);
   
       navigate("/feed");
     } catch (error) {
@@ -155,18 +153,18 @@ const LoginPage = () => {
             </Button>
 
             <GoogleLogin
-              onSuccess={(credentialResponse) => {
-              const credential = credentialResponse.credential;
-              if (credential) {
-                handleGoogleSuccessLogin(credential);
-              } else {
-                setError("Google login failed: No credential received");
-              }
-              }}
-                onError={() => {
-                setError("Google login failed");
-             }}
-               />
+  onSuccess={(credentialResponse) => {
+    const credential = credentialResponse.credential;
+    if (credential) {
+      handleGoogleSuccessLogin(credential);
+    } else {
+      console.error("❌ No credential received");
+    }
+  }}
+  onError={() => {
+    console.error("❌ Google login failed");
+  }}
+/>
 
 
             <Spacer y={2} />
