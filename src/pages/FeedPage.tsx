@@ -15,8 +15,18 @@ const FeedPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
-  const user : User  = JSON.parse(localStorage.getItem("user") || "{}");
-  const avatar = user.profileImage || "/gamer.png";
+  const storedUser = localStorage.getItem("user");
+const user: User | null = storedUser ? JSON.parse(storedUser) : null;
+
+if (!user) {
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <p className="text-xl text-gray-600">User not found. Please log in again.</p>
+    </div>
+  );
+}
+
+const avatar = user.profileImage || "/gamer.png";
 
   // Handle emoji selection
   const onEmojiClick = (emojiData: EmojiClickData) => {
@@ -83,7 +93,6 @@ const FeedPage: React.FC = () => {
       team2Logo = data[prediction.Team2];
       const drawLogo = data["Draw"];
 
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
 
 const post = {
   title: `${prediction.Team1} VS ${prediction.Team2} - AI Prediction`,
@@ -132,7 +141,6 @@ const post = {
       const formData = new FormData();
       formData.append("title", "New Post");
       formData.append("content", postContent);
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
       formData.append("owner", user.id);
 
       if (selectedImage) {

@@ -131,11 +131,11 @@ const Chat = () => {
                   >
                     <ListItemAvatar>
                     <Avatar
-              src={user.profileImage || "/default-avatar.jpg"}
-              alt={user.userFullName}
+              src={user?.profileImage || "/default-avatar.jpg"}
+              alt={user?.userFullName}
             />
                          </ListItemAvatar>
-                    <ListItemText primary={user.userFullName} />
+                    <ListItemText primary={user?.userFullName} />
                   </ListItemButton>
                 ))}
               </List>
@@ -154,11 +154,11 @@ const Chat = () => {
               >
                 
                 <Avatar
-              src={selectedUser.profileImage || "/default-avatar.jpg"}
-              alt={selectedUser.userFullName}
+              src={selectedUser?.profileImage || "/default-avatar.jpg"}
+              alt={selectedUser?.userFullName}
             />
                 <Typography marginTop={'5px'} variant="h6" flexGrow={1}>     
-                    {selectedUser.userFullName}
+                    {selectedUser?.userFullName}
                     </Typography>
                 <Button
                   color="secondary"

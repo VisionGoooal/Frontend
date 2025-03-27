@@ -10,9 +10,7 @@ import {
   Spinner,
 } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
-import { GoogleLogin } from '@react-oauth/google';
-
-
+import { GoogleLogin } from "@react-oauth/google";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -20,7 +18,6 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -32,21 +29,29 @@ const LoginPage = () => {
     setError("");
 
     try {
-      const response = await fetch(import.meta.env.VITE_SERVER_API_URL+"/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        import.meta.env.VITE_SERVER_API_URL + "/api/auth/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Login failed");
 
       const { accessToken, refreshToken, user } = data;
 
+      // ✅ הגנה: ודא ש־userFullName קיים
+      if (!user.userFullName) {
+        user.userFullName = user.email || "Anonymous";
+      }
+
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("userId", user.id); // Or user._id depending on your backend
+      localStorage.setItem("userId", user.id);
 
       navigate("/feed");
     } catch (error) {
@@ -64,21 +69,30 @@ const LoginPage = () => {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch(import.meta.env.VITE_SERVER_API_URL + "/api/auth/googleAuth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body:  credential ,
-      });
-  
+      const response = await fetch(
+        import.meta.env.VITE_SERVER_API_URL + "/api/auth/googleAuth",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ credential }),
+        }
+      );
+
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Login failed");
-  
+
       const { accessToken, refreshToken, user } = data;
-  
+
+      // ✅ הגנה: ודא ש־userFullName קיים
+      if (!user.userFullName) {
+        user.userFullName = user.email || "Anonymous";
+      }
+
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("user", JSON.stringify(user));
-  
+      localStorage.setItem("userId", user.id);
+
       navigate("/feed");
     } catch (error) {
       if (error instanceof Error) {
@@ -90,7 +104,6 @@ const LoginPage = () => {
       setLoading(false);
     }
   };
-  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -153,19 +166,18 @@ const LoginPage = () => {
             </Button>
 
             <GoogleLogin
-  onSuccess={(credentialResponse) => {
-    const credential = credentialResponse.credential;
-    if (credential) {
-      handleGoogleSuccessLogin(credential);
-    } else {
-      console.error("❌ No credential received");
-    }
-  }}
-  onError={() => {
-    console.error("❌ Google login failed");
-  }}
-/>
-
+              onSuccess={(credentialResponse) => {
+                const credential = credentialResponse.credential;
+                if (credential) {
+                  handleGoogleSuccessLogin(credential);
+                } else {
+                  console.error("❌ No credential received");
+                }
+              }}
+              onError={() => {
+                console.error("❌ Google login failed");
+              }}
+            />
 
             <Spacer y={2} />
 
