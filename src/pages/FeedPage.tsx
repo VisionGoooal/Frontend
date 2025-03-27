@@ -14,6 +14,8 @@ const FeedPage: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [page, setPage] = useState<number>(1);
+  const [hasMore, setHasMore] = useState<boolean>(true);
 
   const storedUser = localStorage.getItem("user");
 const user: User | null = storedUser ? JSON.parse(storedUser) : null;
@@ -52,11 +54,20 @@ const avatar = user.profileImage || "/gamer.png";
     };
 
   // Fetch all posts
-  const fetchPosts = async () => {
+  const fetchPosts = async (pageNumber: number = 1 , limit: number = 5) => {
     try {
       setIsLoading(true);
-      const response = await axiosInstance.get("api/posts");
-      setPosts(response.data);
+      const response = await axiosInstance.get(`api/posts?page=${page}&limit=${limit}`);
+      const newPosts = response.data.posts;
+      const total = response.data.totalPosts;
+
+
+      setPosts(prev => {
+      const updatedPosts = pageNumber === 1 ? newPosts : [...prev, ...newPosts];
+      setHasMore(updatedPosts.length < total);
+      return updatedPosts;
+    });
+      setPage(pageNumber);
     } catch (error) {
       console.error("Error fetching posts:", error);
     } finally {
@@ -66,21 +77,47 @@ const avatar = user.profileImage || "/gamer.png";
 
   useEffect(() => {
     fetchPosts();
+    checkAndRepost();
   }, []);
 
   useEffect(() => {
-    const checkAndRepost = async () => {
-      const storedPrediction = window.localStorage.getItem("prediction");
-      if (storedPrediction) {
-        const prediction: Prediction = JSON.parse(storedPrediction);
-        await addPostByPrediction(prediction);
-        window.localStorage.removeItem("prediction");
+    // Handle infinite scroll event
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight - 200
+      ) {
+        if ((!isLoading )&& hasMore) {
+          fetchPosts(page + 1);
+        }
       }
-      await fetchPosts(); // קורה רק אחרי שהפוסט התווסף
     };
+
+    window.addEventListener('scroll', handleScroll);
+
+    // Cleanup listener on unmount
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isLoading, hasMore, page]);
+
+
+  const checkAndRepost = async () => {
+    const storedPrediction = window.localStorage.getItem("prediction");
+    if (storedPrediction) {
+      const prediction: Prediction = JSON.parse(storedPrediction);
+      await addPostByPrediction(prediction);
+      window.localStorage.removeItem("prediction");
+    }
+    await fetchPosts(); // קורה רק אחרי שהפוסט התווסף
+  };
+
+
+  // useEffect(() => {
+   
   
-    checkAndRepost();
-  }, []);
+  //   checkAndRepost();
+  // }, []);
   
 
   const addPostByPrediction = async (prediction: Prediction) => {
