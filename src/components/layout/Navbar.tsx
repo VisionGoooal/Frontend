@@ -103,7 +103,7 @@ export default function Navbar() {
                           user.profileImage
                             ? user.profileImage.startsWith("http")
                               ? user.profileImage
-                              : `${import.meta.env.VITE_SERVER_API_URL}/${user.profileImage}`
+                              : `${import.meta.env.VITE_SERVER_API_URL}${user.profileImage}`
                             : "https://img.freepik.com/free-vector/smiling-young-man-illustration_1308-173524.jpg"
                         }
                         alt="User Profile"

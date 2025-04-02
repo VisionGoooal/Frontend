@@ -54,10 +54,10 @@ const avatar = user.profileImage || "/gamer.png";
     };
 
   // Fetch all posts
-  const fetchPosts = async (pageNumber: number = 1 , limit: number = 5) => {
+  const fetchPosts = async (pageNumber: number = 1) => {
     try {
       setIsLoading(true);
-      const response = await axiosInstance.get(`api/posts?page=${page}&limit=${limit}`);
+      const response = await axiosInstance.get(`api/posts?page=${pageNumber}&limit=5`);
       const newPosts = response.data.posts;
       const total = response.data.totalPosts;
 
@@ -76,8 +76,8 @@ const avatar = user.profileImage || "/gamer.png";
   };
 
   useEffect(() => {
-    fetchPosts();
     checkAndRepost();
+    fetchPosts();
   }, []);
 
   useEffect(() => {
@@ -89,6 +89,7 @@ const avatar = user.profileImage || "/gamer.png";
       ) {
         if ((!isLoading )&& hasMore) {
           fetchPosts(page + 1);
+
         }
       }
     };
@@ -109,16 +110,9 @@ const avatar = user.profileImage || "/gamer.png";
       await addPostByPrediction(prediction);
       window.localStorage.removeItem("prediction");
     }
-    await fetchPosts(); // קורה רק אחרי שהפוסט התווסף
+    // await fetchPosts(); // קורה רק אחרי שהפוסט התווסף
+    
   };
-
-
-  // useEffect(() => {
-   
-  
-  //   checkAndRepost();
-  // }, []);
-  
 
   const addPostByPrediction = async (prediction: Prediction) => {
     let team1Logo = "";
@@ -148,7 +142,8 @@ const post = {
 };
 
       console.log("🚀 Sending post:", post);
-      await axiosInstance.post("api/prediction/post", post);
+      const newPost = await axiosInstance.post<Post>("api/prediction/post", post);
+      setPosts(prev => [newPost.data, ...prev ]);
     } catch (error) {
       console.error("Error reposting prediction:", error);
     }
@@ -185,20 +180,27 @@ const post = {
       }
       formData.append("likes", "0");
 
-      await axiosInstance.post("/api/posts", formData, {
+      const newPost = await axiosInstance.post("/api/posts", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       setPostContent("");
       setSelectedImage(null);
-      fetchPosts(); // Refresh posts after submission
+      setPosts(prev => [ newPost.data , ...prev]);
+      
+      // fetchPosts(); // Refresh posts after submission
     } catch (error) {
       console.error("Error adding post:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
-
+  const handlePostUpdated = (updatedPost: Post) => {
+    console.log(updatedPost)
+    setPosts((prev) =>
+      prev.map((post) => (post._id === updatedPost._id ? updatedPost : post))
+    );
+  };
   return (
     <>
       <Navbar />
@@ -290,15 +292,12 @@ const post = {
         {isLoading ? (
           <p>Loading...</p>
         ) : posts.length > 0 ? (
-          posts
-            .slice()
-            .reverse()
-            .map((post) => (
+          posts.map((post) => (
               <div
                 key={post._id}
                 className="my-6 p-4 border rounded-lg shadow-md"
               >
-                <PostWithComments postId={post._id} deleteHandler={handleDeletePost}  />
+                <PostWithComments postData={post} deleteHandler={handleDeletePost} updateHandler = {handlePostUpdated}  />
               </div>
             ))
         ) : (

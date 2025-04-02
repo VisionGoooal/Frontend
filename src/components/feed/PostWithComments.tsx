@@ -5,15 +5,16 @@ import { Post } from "../../types/Post";
 import { User } from "../../types/user";
 
 interface PostWithCommentsProps {
-  postId: string;
+  postData: Post;
   deleteHandler : (postId:string)=>{};
+  updateHandler : (updatedPost : Post)=>void;
 }
 
-const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId , deleteHandler }) => {
-  const [post, setPost] = useState<Post | null>(null);
+const PostWithComments: React.FC<PostWithCommentsProps> = ({ postData , deleteHandler, updateHandler }) => {
+  const [post, setPost] = useState<Post>(postData);
   const [comments, setComments] = useState<Comment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [likes, setLikes] = useState<[number]>([0]);
+  const [likes, setLikes] = useState<[number]>(postData.likes);
   const [showCommentInput, setShowCommentInput] = useState<boolean>(false);
   const [newComment, setNewComment] = useState<string>("");
   const [showEditModal, setShowEditModal] = useState<boolean>(false);
@@ -28,14 +29,14 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId , deleteHand
       try {
         setIsLoading(true);
 
-        const [postResponse, commentsResponse] = await Promise.all([
-          axiosInstance.get(`/api/posts/${postId}`),
-          axiosInstance.get(`/api/comments/${postId}`),
+        const [commentsResponse] = await Promise.all([
+          // axiosInstance.get(`/api/posts/${postId}`),
+          axiosInstance.get(`/api/comments/${post._id}`),
         ]);
 
-        const postData = postResponse.data;
-        setPost(postData);
-        setLikes(postData.likes);
+        // const postData = postResponse.data;
+        // setPost(postData);
+        // setLikes(postData.likes);
         setComments(
           Array.isArray(commentsResponse.data) ? commentsResponse.data : []
         );
@@ -47,10 +48,11 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId , deleteHand
     };
 
     fetchPostAndComments();
-  }, [postId]);
+  }, [post._id]);
   const handleEditModal = () => {
     if (!post) return;
     setEditContent(post.content);
+    setEditImage(post.image ? new File([], post.image) : null); // Set the selected file if post has an image
     setShowEditModal(true);
   };
   
@@ -60,7 +62,7 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId , deleteHand
       formData.append("content", editContent);
       if (editImage) formData.append("image", editImage);
   
-      const response = await axiosInstance.put(`/api/posts/${postId}`, formData, {
+      const response = await axiosInstance.put(`/api/posts/${post._id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -68,7 +70,8 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId , deleteHand
   
       setPost(response.data);
       setShowEditModal(false);
-      setEditImage(null);
+      console.log("Post updated successfully:", response.data);
+      updateHandler(post)
     } catch (error) {
       console.error("Error updating post:", error);
     }
@@ -80,7 +83,7 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId , deleteHand
 
   const handleLike = async () => {
     try {
-      const response = await axiosInstance.put(`/api/posts/${postId}/like`, {
+      const response = await axiosInstance.put(`/api/posts/${post._id}/like`, {
         action: "like",
       });
       setLikes(response.data.likes);
@@ -96,9 +99,9 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId , deleteHand
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) return;
     try {
-      const response = await axiosInstance.post(`/api/comments/${postId}`, {
+      const response = await axiosInstance.post(`/api/comments/${post._id}`, {
         content: newComment,
-        postId: postId,
+        postId: post._id,
         owner: user.id,
       });
       console.log(response.data)
@@ -120,7 +123,7 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId , deleteHand
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center">
           <img
-            src={user.profileImage}
+            src={post.owner.profileImage}
             alt="user-profile"
             className="w-10 h-10 rounded-full mr-3"
           />
@@ -128,7 +131,6 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId , deleteHand
             <h3 className="text-sm font-semibold text-gray-900 dark:text-black">
               {post.owner.userFullName }
             </h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Just now</p>
           </div>
         </div>
         {/* conditianal rendering */}
@@ -153,7 +155,7 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId , deleteHand
     {/* modal for editing post */}
   {/* Modal Overlay (optional) */}
   {showEditModal && (
-  <div className="absolute inset-0 flex items-center justify-center z-10">
+  <div className="fixed inset-0 flex items-center justify-center z-10">
     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
       <h2 className="text-lg font-semibold mb-4 text-black dark:text-white">Edit Post</h2>
 
@@ -170,7 +172,10 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId , deleteHand
         onChange={(e) => setEditImage(e.target.files?.[0] || null)}
         className="mb-4"
       />
-
+        {/* Image Preview */}
+        {editImage &&
+        <img src={editImage.name}></img>
+       }
       <div className="flex justify-end space-x-2">
         <button
           onClick={() => setShowEditModal(false)}
@@ -263,7 +268,7 @@ const PostWithComments: React.FC<PostWithCommentsProps> = ({ postId , deleteHand
                 <p className="text-sm font-semibold text-gray-800 dark:text-black">
                   {comment.owner.userFullName}
                 </p>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
+                <p className="text-sm text-gray-600 dark:text-gray-600">
                   {comment.content}
                 </p>
               </div>

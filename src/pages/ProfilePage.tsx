@@ -21,12 +21,12 @@ const ProfilePage = () => {
   const token = localStorage.getItem("accessToken");
   const serverURL = import.meta.env.VITE_SERVER_API_URL;
 
-  const getImageURL = (imagePath: string) => {
-    if (!imagePath) return "";
-    return imagePath.includes(serverURL)
-      ? imagePath
-      : `${serverURL}${imagePath}`;
-  };
+  // const getImageURL = (imagePath: string) => {
+  //   if (!imagePath) return "";
+  //   return imagePath.includes(serverURL)
+  //     ? imagePath
+  //     : `${serverURL}${imagePath}`;
+  // };
 
   useEffect(() => {
     if (!user || !user.id) {
@@ -145,6 +145,7 @@ const ProfilePage = () => {
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.message);
+      let tempUser = data.user;
 
       if (selectedFile) {
         const formData = new FormData();
@@ -163,7 +164,8 @@ const ProfilePage = () => {
 
         const imgData = await imageRes.json();
         if (!imageRes.ok) throw new Error(imgData.message);
-
+        tempUser.profileImage = imgData.profileImage;
+        localStorage.setItem("user", JSON.stringify(tempUser));
         setProfilePic(`${imgData.profileImage}?t=${Date.now()}`);
       }
 
@@ -289,7 +291,7 @@ const ProfilePage = () => {
                     <p className="text-gray-800 whitespace-pre-wrap">{post.content}</p>
                     {post.image && (
                       <img
-                        src={getImageURL(post.image)}
+                        src={post.image}
                         alt="Post"
                         className="mt-3 w-full h-auto rounded"
                       />
